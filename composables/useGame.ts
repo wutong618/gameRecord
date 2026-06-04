@@ -1,6 +1,5 @@
-import { ref, computed, watch } from 'vue'
-import type { Game, Player, Round } from '~/types'
-import { DEFAULT_PLAYERS } from '~/types'
+import { ref, computed } from 'vue'
+import type { Game } from '~/types'
 import * as db from '~/composables/useDb'
 
 // 全局游戏列表

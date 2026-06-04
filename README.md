@@ -7,7 +7,7 @@
 - **4 位固定玩家**：吴、王、来、静
 - **游戏化 UI**：暗黑风格 + 霓虹发光效果
 - **专业级图表**：柱状图对比 + 折线图趋势
-- **数据持久化**：IndexedDB 本地存储
+- **共享数据持久化**：服务端 JSON 文件存储，所有人访问同一份数据
 - **导入/导出**：支持 JSON 文件备份
 - **移动端适配**：完美支持手机浏览
 
@@ -16,7 +16,7 @@
 - **框架**：Nuxt 3 (SSR: false)
 - **UI**：Tailwind CSS
 - **图表**：Chart.js + vue-chartjs
-- **数据库**：Dexie.js (IndexedDB)
+- **存储**：Nitro server API + server/data/games.json（所有用户共享）
 
 ## 🚀 快速开始
 
@@ -68,10 +68,14 @@ gameRecord/
 │   ├── ScoreTrendChart.vue    # 折线图
 │   ├── ScoreInputModal.vue    # 分数录入弹窗
 │   ├── GameHistoryCard.vue    # 历史游戏卡片
-│   └── RoundListItem.vue      # 轮次列表项
+│   └── RoundListItem.vue      # 轮次列表项（横向一条：姓名+分数）
 ├── composables/       # 组合式 API
-│   ├── useDb.ts       # IndexedDB 操作
+│   ├── useDb.ts       # 调 server API 的数据访问层
 │   └── useGame.ts     # 游戏状态管理
+├── server/            # Nitro 后端（共享数据存储）
+│   ├── api/games/     # 增删改查接口
+│   ├── data/games.json# 数据文件（git 忽略）
+│   └── utils/db.ts    # 文件读写工具
 ├── plugins/           # Nuxt 插件
 │   └── chartjs.client.ts
 ├── pages/             # 路由页面
