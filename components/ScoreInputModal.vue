@@ -41,27 +41,42 @@
                 <input
                   v-model.number="scores[player.id]"
                   type="number"
-                  class="w-full bg-slate-700 text-center text-xl font-bold text-white py-3 px-2 rounded-xl border-2 focus:border-neon-blue outline-none transition-all"
-                  :class="scores[player.id] >= 0 ? 'border-slate-600 focus:border-neon-green' : 'border-slate-600 focus:border-neon-pink'"
-                  placeholder="0"
                   inputmode="numeric"
+                  class="w-full bg-slate-700 text-center text-xl font-bold text-white py-3 px-2 rounded-xl border-2 focus:border-neon-blue outline-none transition-all"
+                  :class="(scores[player.id] ?? 0) >= 0 ? 'border-slate-600 focus:border-neon-green' : 'border-slate-600 focus:border-neon-pink'"
+                  placeholder="0"
                 />
+                <button
+                  type="button"
+                  class="mt-1.5 text-xs text-slate-400 hover:text-white px-2 py-0.5 rounded border border-slate-700 hover:border-slate-500 transition-colors"
+                  :class="(scores[player.id] ?? 0) < 0 ? 'text-neon-pink border-neon-pink/40' : ''"
+                  @click="toggleSign(player.id)"
+                >
+                  ± 切换正负
+                </button>
               </div>
             </div>
 
             <!-- 按钮组 -->
             <div class="flex gap-4">
               <button
-                class="flex-1 py-4 rounded-xl text-lg font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition-all"
+                class="flex-1 py-4 rounded-xl text-lg font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition-all disabled:opacity-50"
+                :disabled="saving"
                 @click="close"
               >
                 取消
               </button>
               <button
-                class="flex-1 py-4 rounded-xl text-lg font-bold bg-gradient-to-r from-neon-green to-emerald-500 text-slate-900 hover:opacity-90 transition-all"
+                class="flex-1 py-4 rounded-xl text-lg font-bold bg-gradient-to-r from-neon-green to-emerald-500 text-slate-900 hover:opacity-90 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+                :disabled="saving"
                 @click="confirm"
               >
-                {{ isEdit ? '保存修改' : '确认记录' }}
+                <svg v-if="saving" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                  <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                </svg>
+                <span>{{ saving ? '保存中...' : (isEdit ? '保存修改' : '确认记录') }}</span>
               </button>
             </div>
           </div>
@@ -72,15 +87,16 @@
 </template>
 
 <script setup lang="ts">
-import type { Player } from '~/types'
+import type { PlayerProfile } from '~/types'
 import { PLAYER_COLORS } from '~/types'
 
 const props = defineProps<{
   show: boolean
-  players: Player[]
+  players: PlayerProfile[]
   isEdit?: boolean
   roundNumber?: number
   initialScores?: number[]
+  saving?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -111,12 +127,19 @@ function getAvatarStyle(color: string) {
 }
 
 function close() {
+  if (props.saving) return
   emit('close')
 }
 
+function toggleSign(playerId: number) {
+  const cur = scores.value[playerId] ?? 0
+  scores.value[playerId] = -cur
+}
+
 function confirm() {
+  if (props.saving) return
   emit('confirm', [...scores.value])
-  close()
+  // 不在这里 close，由父组件在保存完成后关闭
 }
 </script>
 

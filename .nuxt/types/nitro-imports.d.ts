@@ -8,17 +8,22 @@ declare global {
   const appendResponseHeader: typeof import('../../node_modules/h3').appendResponseHeader
   const appendResponseHeaders: typeof import('../../node_modules/h3').appendResponseHeaders
   const assertMethod: typeof import('../../node_modules/h3').assertMethod
+  const cacheGet: typeof import('../../server/utils/cache').cacheGet
+  const cacheInvalidate: typeof import('../../server/utils/cache').cacheInvalidate
+  const cacheInvalidateAll: typeof import('../../server/utils/cache').cacheInvalidateAll
+  const cacheSet: typeof import('../../server/utils/cache').cacheSet
   const cachedEventHandler: typeof import('../../node_modules/nitropack/dist/runtime/internal/cache').cachedEventHandler
   const cachedFunction: typeof import('../../node_modules/nitropack/dist/runtime/internal/cache').cachedFunction
+  const calcTotalScores: typeof import('../../server/utils/room').calcTotalScores
   const callNodeListener: typeof import('../../node_modules/h3').callNodeListener
   const clearResponseHeaders: typeof import('../../node_modules/h3').clearResponseHeaders
   const clearSession: typeof import('../../node_modules/h3').clearSession
   const createApp: typeof import('../../node_modules/h3').createApp
   const createAppEventHandler: typeof import('../../node_modules/h3').createAppEventHandler
+  const createEmptyRoom: typeof import('../../server/utils/room').createEmptyRoom
   const createError: typeof import('../../node_modules/h3').createError
   const createEvent: typeof import('../../node_modules/h3').createEvent
   const createEventStream: typeof import('../../node_modules/h3').createEventStream
-  const createNewGame: typeof import('../../server/utils/db').createNewGame
   const createRouter: typeof import('../../node_modules/h3').createRouter
   const defaultContentType: typeof import('../../node_modules/h3').defaultContentType
   const defineAppConfig: typeof import('../../node_modules/nuxt/dist/core/runtime/nitro/config').defineAppConfig
@@ -37,19 +42,21 @@ declare global {
   const defineTask: typeof import('../../node_modules/nitropack/dist/runtime/internal/task').defineTask
   const defineWebSocket: typeof import('../../node_modules/h3').defineWebSocket
   const defineWebSocketHandler: typeof import('../../node_modules/h3').defineWebSocketHandler
+  const deleteAllRooms: typeof import('../../server/utils/room').deleteAllRooms
   const deleteCookie: typeof import('../../node_modules/h3').deleteCookie
+  const deleteRoom: typeof import('../../server/utils/room').deleteRoom
   const dynamicEventHandler: typeof import('../../node_modules/h3').dynamicEventHandler
   const eventHandler: typeof import('../../node_modules/h3').eventHandler
   const fetchWithEvent: typeof import('../../node_modules/h3').fetchWithEvent
   const fromNodeMiddleware: typeof import('../../node_modules/h3').fromNodeMiddleware
   const fromPlainHandler: typeof import('../../node_modules/h3').fromPlainHandler
   const fromWebHandler: typeof import('../../node_modules/h3').fromWebHandler
-  const generateGameName: typeof import('../../server/utils/db').generateGameName
-  const generateId: typeof import('../../server/utils/db').generateId
+  const getAllPlayers: typeof import('../../server/utils/room').getAllPlayers
   const getCookie: typeof import('../../node_modules/h3').getCookie
   const getHeader: typeof import('../../node_modules/h3').getHeader
   const getHeaders: typeof import('../../node_modules/h3').getHeaders
   const getMethod: typeof import('../../node_modules/h3').getMethod
+  const getPlayer: typeof import('../../server/utils/room').getPlayer
   const getProxyRequestHeaders: typeof import('../../node_modules/h3').getProxyRequestHeaders
   const getQuery: typeof import('../../node_modules/h3').getQuery
   const getRequestFingerprint: typeof import('../../node_modules/h3').getRequestFingerprint
@@ -65,6 +72,7 @@ declare global {
   const getResponseHeaders: typeof import('../../node_modules/h3').getResponseHeaders
   const getResponseStatus: typeof import('../../node_modules/h3').getResponseStatus
   const getResponseStatusText: typeof import('../../node_modules/h3').getResponseStatusText
+  const getRoom: typeof import('../../server/utils/room').getRoom
   const getRouteRules: typeof import('../../node_modules/nitropack/dist/runtime/internal/route-rules').getRouteRules
   const getRouterParam: typeof import('../../node_modules/h3').getRouterParam
   const getRouterParams: typeof import('../../node_modules/h3').getRouterParams
@@ -73,6 +81,8 @@ declare global {
   const getValidatedRouterParams: typeof import('../../node_modules/h3').getValidatedRouterParams
   const handleCacheHeaders: typeof import('../../node_modules/h3').handleCacheHeaders
   const handleCors: typeof import('../../node_modules/h3').handleCors
+  const initDb: typeof import('../../server/utils/init-db').initDb
+  const invalidateRoomCache: typeof import('../../server/utils/room').invalidateRoomCache
   const isCorsOriginAllowed: typeof import('../../node_modules/h3').isCorsOriginAllowed
   const isError: typeof import('../../node_modules/h3').isError
   const isEvent: typeof import('../../node_modules/h3').isEvent
@@ -82,17 +92,16 @@ declare global {
   const isStream: typeof import('../../node_modules/h3').isStream
   const isWebResponse: typeof import('../../node_modules/h3').isWebResponse
   const lazyEventHandler: typeof import('../../node_modules/h3').lazyEventHandler
+  const listRooms: typeof import('../../server/utils/room').listRooms
   const nitroPlugin: typeof import('../../node_modules/nitropack/dist/runtime/internal/plugin').nitroPlugin
   const parseCookies: typeof import('../../node_modules/h3').parseCookies
   const promisifyNodeListener: typeof import('../../node_modules/h3').promisifyNodeListener
   const proxyRequest: typeof import('../../node_modules/h3').proxyRequest
-  const readAllGames: typeof import('../../server/utils/db').readAllGames
   const readBody: typeof import('../../node_modules/h3').readBody
   const readFormData: typeof import('../../node_modules/h3').readFormData
   const readMultipartFormData: typeof import('../../node_modules/h3').readMultipartFormData
   const readRawBody: typeof import('../../node_modules/h3').readRawBody
   const readValidatedBody: typeof import('../../node_modules/h3').readValidatedBody
-  const recalcTotalScores: typeof import('../../server/utils/db').recalcTotalScores
   const removeResponseHeader: typeof import('../../node_modules/h3').removeResponseHeader
   const runTask: typeof import('../../node_modules/nitropack/dist/runtime/internal/task').runTask
   const sanitizeStatusCode: typeof import('../../node_modules/h3').sanitizeStatusCode
@@ -110,16 +119,19 @@ declare global {
   const setCookie: typeof import('../../node_modules/h3').setCookie
   const setHeader: typeof import('../../node_modules/h3').setHeader
   const setHeaders: typeof import('../../node_modules/h3').setHeaders
+  const setPlayerAvatar: typeof import('../../server/utils/room').setPlayerAvatar
   const setResponseHeader: typeof import('../../node_modules/h3').setResponseHeader
   const setResponseHeaders: typeof import('../../node_modules/h3').setResponseHeaders
   const setResponseStatus: typeof import('../../node_modules/h3').setResponseStatus
   const splitCookiesString: typeof import('../../node_modules/h3').splitCookiesString
+  const sql: typeof import('../../server/utils/postgres').sql
   const toEventHandler: typeof import('../../node_modules/h3').toEventHandler
   const toNodeListener: typeof import('../../node_modules/h3').toNodeListener
   const toPlainHandler: typeof import('../../node_modules/h3').toPlainHandler
   const toWebHandler: typeof import('../../node_modules/h3').toWebHandler
   const toWebRequest: typeof import('../../node_modules/h3').toWebRequest
   const unsealSession: typeof import('../../node_modules/h3').unsealSession
+  const updateRoomGameData: typeof import('../../server/utils/room').updateRoomGameData
   const updateSession: typeof import('../../node_modules/h3').updateSession
   const useAppConfig: typeof import('../../node_modules/nitropack/dist/runtime/internal/config').useAppConfig
   const useBase: typeof import('../../node_modules/h3').useBase
@@ -128,8 +140,16 @@ declare global {
   const useRuntimeConfig: typeof import('../../node_modules/nitropack/dist/runtime/internal/config').useRuntimeConfig
   const useSession: typeof import('../../node_modules/h3').useSession
   const useStorage: typeof import('../../node_modules/nitropack/dist/runtime/internal/storage').useStorage
-  const writeAllGames: typeof import('../../server/utils/db').writeAllGames
   const writeEarlyHints: typeof import('../../node_modules/h3').writeEarlyHints
+}
+// for type re-export
+declare global {
+  // @ts-ignore
+  export type { VercelPoolClient, Row, Field } from '../../server/utils/postgres'
+  import('../../server/utils/postgres')
+  // @ts-ignore
+  export type { RoomSummary } from '../../server/utils/room'
+  import('../../server/utils/room')
 }
 export { useNitroApp } from 'nitropack/runtime/internal/app';
 export { useRuntimeConfig, useAppConfig } from 'nitropack/runtime/internal/config';
@@ -145,4 +165,7 @@ export { defineNitroErrorHandler } from 'nitropack/runtime/internal/error/utils'
 export { appendCorsHeaders, appendCorsPreflightHeaders, appendHeader, appendHeaders, appendResponseHeader, appendResponseHeaders, assertMethod, callNodeListener, clearResponseHeaders, clearSession, createApp, createAppEventHandler, createError, createEvent, createEventStream, createRouter, defaultContentType, defineEventHandler, defineLazyEventHandler, defineNodeListener, defineNodeMiddleware, defineRequestMiddleware, defineResponseMiddleware, defineWebSocket, defineWebSocketHandler, deleteCookie, dynamicEventHandler, eventHandler, fetchWithEvent, fromNodeMiddleware, fromPlainHandler, fromWebHandler, getCookie, getHeader, getHeaders, getMethod, getProxyRequestHeaders, getQuery, getRequestFingerprint, getRequestHeader, getRequestHeaders, getRequestHost, getRequestIP, getRequestPath, getRequestProtocol, getRequestURL, getRequestWebStream, getResponseHeader, getResponseHeaders, getResponseStatus, getResponseStatusText, getRouterParam, getRouterParams, getSession, getValidatedQuery, getValidatedRouterParams, handleCacheHeaders, handleCors, isCorsOriginAllowed, isError, isEvent, isEventHandler, isMethod, isPreflightRequest, isStream, isWebResponse, lazyEventHandler, parseCookies, promisifyNodeListener, proxyRequest, readBody, readFormData, readMultipartFormData, readRawBody, readValidatedBody, removeResponseHeader, sanitizeStatusCode, sanitizeStatusMessage, sealSession, send, sendError, sendIterable, sendNoContent, sendProxy, sendRedirect, sendStream, sendWebResponse, serveStatic, setCookie, setHeader, setHeaders, setResponseHeader, setResponseHeaders, setResponseStatus, splitCookiesString, toEventHandler, toNodeListener, toPlainHandler, toWebHandler, toWebRequest, unsealSession, updateSession, useBase, useSession, writeEarlyHints } from 'h3';
 export { buildAssetsURL as __buildAssetsURL, publicAssetsURL as __publicAssetsURL } from '/Users/dukkha/gameRecord/node_modules/nuxt/dist/core/runtime/nitro/paths';
 export { defineAppConfig } from '/Users/dukkha/gameRecord/node_modules/nuxt/dist/core/runtime/nitro/config';
-export { readAllGames, writeAllGames, generateId, generateGameName, createNewGame, recalcTotalScores } from '/Users/dukkha/gameRecord/server/utils/db';
+export { cacheGet, cacheSet, cacheInvalidate, cacheInvalidateAll } from '/Users/dukkha/gameRecord/server/utils/cache';
+export { initDb } from '/Users/dukkha/gameRecord/server/utils/init-db';
+export { sql } from '/Users/dukkha/gameRecord/server/utils/postgres';
+export { invalidateRoomCache, getAllPlayers, getPlayer, setPlayerAvatar, getRoom, createEmptyRoom, updateRoomGameData, deleteRoom, deleteAllRooms, listRooms, calcTotalScores } from '/Users/dukkha/gameRecord/server/utils/room';

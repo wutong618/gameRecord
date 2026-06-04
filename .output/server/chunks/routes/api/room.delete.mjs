@@ -1,0 +1,26 @@
+import { d as defineEventHandler, g as getQuery, c as createError } from '../../nitro/nitro.mjs';
+import { d as deleteRoom } from '../../_/room.mjs';
+import 'node:http';
+import 'node:https';
+import 'node:events';
+import 'node:buffer';
+import 'node:fs';
+import 'node:path';
+import 'node:crypto';
+import 'node:url';
+import '@vercel/postgres';
+
+const room_delete = defineEventHandler(async (event) => {
+  const id = getQuery(event).id;
+  if (typeof id !== "string" || !id.trim()) {
+    throw createError({ statusCode: 400, statusMessage: "\u7F3A\u5C11 id \u53C2\u6570" });
+  }
+  const ok = await deleteRoom(id.trim());
+  if (!ok) {
+    throw createError({ statusCode: 404, statusMessage: "\u623F\u95F4\u4E0D\u5B58\u5728" });
+  }
+  return { success: true };
+});
+
+export { room_delete as default };
+//# sourceMappingURL=room.delete.mjs.map

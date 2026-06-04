@@ -1,1 +1,24 @@
-{"name": "gameRecord", "private": true, "type": "module", "scripts": {"build": "nuxt build", "dev": "nuxt dev", "generate": "nuxt generate", "preview": "nuxt preview", "postinstall": "nuxt prepare"}, "dependencies": {"nuxt": "3.11.2", "vue": "3.4.21", "vue-router": "4.3.0", "@nuxtjs/tailwindcss": "6.11.4", "chart.js": "4.4.2", "vue-chartjs": "5.3.0", "dexie": "3.2.7"}}
+{
+  "name": "gameRecord",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@vercel/blob": "^0.23.4",
+    "@vercel/postgres": "^0.10.0",
+    "chart.js": "4.4.2",
+    "nuxt": "3.11.2",
+    "vue": "3.4.21",
+    "vue-chartjs": "5.3.0",
+    "vue-router": "4.3.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "6.11.4"
+  }
+}

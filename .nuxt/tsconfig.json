@@ -87,7 +87,7 @@
         "./imports"
       ],
       "#app-manifest": [
-        "./manifest/meta/dev.json"
+        "./manifest/meta/5781c00d-ce92-45d9-86d3-75afcde77e27.json"
       ],
       "#build": [
         "."
@@ -132,6 +132,6 @@
     "../node_modules/@nuxtjs/tailwindcss/runtime/server",
     "../node_modules/@nuxt/telemetry/runtime/server",
     "../dist",
-    "dev"
+    "../.output"
   ]
 }

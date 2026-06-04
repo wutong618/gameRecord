@@ -3,14 +3,17 @@ import type { Serialize, Simplify } from "nitropack/types";
 declare module "nitropack/types" {
   type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
   interface InternalApi {
-    '/api/games/:id': {
-      'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/games/[id].delete').default>>>>
-      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/games/[id].get').default>>>>
-      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/games/[id].put').default>>>>
+    '/api/room': {
+      'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/room.delete').default>>>>
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/room.get').default>>>>
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/room.post').default>>>>
     }
-    '/api/games': {
-      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/games/index.get').default>>>>
-      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/games/index.post').default>>>>
+    '/api/rooms': {
+      'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/rooms.delete').default>>>>
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/rooms.get').default>>>>
+    }
+    '/api/upload-avatar': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/upload-avatar.post').default>>>>
     }
     '/__nuxt_error': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/nuxt/dist/core/runtime/nitro/renderer').default>>>>

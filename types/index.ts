@@ -1,33 +1,37 @@
-// 玩家数据类型
-export interface Player {
-  id: number;           // 0-3
-  name: string;         // 姓名
-  color: string;        // 渐变背景CSS
-  totalScore: number;   // 当前总分
+// 玩家档案（来自 PostgreSQL `players` 表）
+export interface PlayerProfile {
+  id: number              // 0-3
+  name: string            // 姓：吴 / 王 / 来 / 静
+  avatarUrl: string | null // Vercel Blob 公开图链
+  color: string           // 主题色 key
 }
 
-// 单轮数据类型
+// 单轮分数（存于 `game_sessions.game_data.rounds`）
 export interface Round {
-  roundNumber: number;  // 轮次编号
-  scores: number[];     // [吴分, 王分, 来分, 静分]
-  createdAt: number;    // 记录时间
+  roundNumber: number
+  scores: number[]        // 长度 4，按 players.id 顺序：[吴, 王, 来, 静]
+  createdAt: number
 }
 
-// 游戏数据类型
-export interface Game {
-  id: string;           // UUID
-  name: string;         // 游戏名称 (含时间戳)
-  createdAt: number;    // 创建时间戳
-  players: Player[];    // 4位玩家
-  rounds: Round[];      // 历史轮次
+// 单局游戏数据快照（存于 `game_sessions.game_data` JSONB 字段）
+export interface GameData {
+  rounds: Round[]
 }
 
-// 默认玩家列表
-export const DEFAULT_PLAYERS: Player[] = [
-  { id: 0, name: '吴', color: 'fire-red', totalScore: 0 },
-  { id: 1, name: '王', color: 'deep-sea-blue', totalScore: 0 },
-  { id: 2, name: '来', color: 'emerald-green', totalScore: 0 },
-  { id: 3, name: '静', color: 'night-purple', totalScore: 0 }
+// 房间记录（GET /api/room 返回结构）
+export interface GameSession {
+  roomId: string
+  createdAt: number
+  gameData: GameData
+  players: PlayerProfile[] // 由服务端 join players 表后返回
+}
+
+// 默认玩家档案（用于初始化 players 表）
+export const DEFAULT_PLAYERS: Omit<PlayerProfile, 'avatarUrl'>[] = [
+  { id: 0, name: '吴', color: 'fire-red' },
+  { id: 1, name: '王', color: 'deep-sea-blue' },
+  { id: 2, name: '来', color: 'emerald-green' },
+  { id: 3, name: '静', color: 'night-purple' }
 ]
 
 // 玩家颜色配置

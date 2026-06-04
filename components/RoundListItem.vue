@@ -14,13 +14,20 @@
         class="flex items-center gap-1.5 min-w-0"
       >
         <span
-          class="w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
-          :style="getPlayerStyle(index)"
+          v-if="playerAt(index)"
+          class="w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0 overflow-hidden"
+          :style="getPlayerStyle(playerAt(index)!.color)"
         >
-          {{ playerNames[index] }}
+          <img
+            v-if="playerAt(index)!.avatarUrl"
+            :src="playerAt(index)!.avatarUrl!"
+            class="w-full h-full object-cover"
+            :alt="playerAt(index)!.name"
+          />
+          <span v-else>{{ playerAt(index)!.name }}</span>
         </span>
         <div class="flex items-baseline gap-0.5 min-w-0 overflow-hidden">
-          <span class="text-slate-300 text-xs truncate">{{ playerNames[index] }}</span>
+          <span class="text-slate-300 text-xs truncate">{{ playerAt(index)?.name }}</span>
           <span
             class="font-bold text-xs whitespace-nowrap"
             :class="score >= 0 ? 'text-neon-green' : 'text-neon-pink'"
@@ -54,33 +61,28 @@
 </template>
 
 <script setup lang="ts">
-import type { Round } from '~/types'
+import type { PlayerProfile, Round } from '~/types'
 import { PLAYER_COLORS } from '~/types'
 
-defineProps<{
+const props = defineProps<{
   round: Round
+  players: PlayerProfile[]
 }>()
 
-const playerNames = ['吴', '王', '来', '静']
+function playerAt(i: number): PlayerProfile | undefined {
+  return props.players[i]
+}
 
 function formatTime(timestamp: number) {
   const date = new Date(timestamp)
-  return date.toLocaleTimeString('zh-CN', {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+  return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 }
 
-function getPlayerStyle(index: number) {
-  const colors = [
-    PLAYER_COLORS['fire-red'],
-    PLAYER_COLORS['deep-sea-blue'],
-    PLAYER_COLORS['emerald-green'],
-    PLAYER_COLORS['night-purple']
-  ][index]
+function getPlayerStyle(colorKey: string) {
+  const c = PLAYER_COLORS[colorKey as keyof typeof PLAYER_COLORS]
   return {
-    background: colors.bg,
-    border: `1px solid ${colors.neon}`
+    background: c.bg,
+    border: `1px solid ${c.neon}`
   }
 }
 
