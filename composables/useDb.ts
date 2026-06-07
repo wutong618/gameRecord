@@ -112,14 +112,45 @@ export async function deleteAllRooms(): Promise<{ deleted: number }> {
   return res
 }
 
-// POST /api/upload-avatar —— 上传头像到 Vercel Blob 并写入 players 表
+// 头像上传：使用 Vercel Blob 官方推荐的 handleUpload 客户端模式
+// 1. 浏览器调 /api/upload-avatar 拿一次性 token
+// 2. 浏览器拿 token 直传 Vercel Blob CDN（不经 server，无 4.5MB 限制）
+// 3. 上传完成后 Vercel Blob 回调 /api/upload-avatar 的 onUploadCompleted 写回 players
+//
+// 上传前先压缩到 200KB（maxSizeMB=0.2），节省 Vercel Blob 存储与流量
 export async function uploadAvatar(playerId: number, file: File): Promise<string> {
-  const form = new FormData()
-  form.append('file', file)
-  form.append('playerId', String(playerId))
-  const res = await $fetch<{ success: boolean; url: string }>('/api/upload-avatar', {
-    method: 'POST',
-    body: form
+  const { upload } = await import('@vercel/blob/client')
+  const imageCompression = (await import('browser-image-compression')).default
+
+  // 校验原始文件类型与 2MB 限制
+  const allowed = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif']
+  if (file.type && !allowed.includes(file.type)) {
+    throw new Error('仅支持 png/jpg/webp/gif')
+  }
+  if (file.size > 2 * 1024 * 1024) {
+    throw new Error('文件大小不能超过 2MB')
+  }
+
+  // 压缩到 ~200KB（web worker 不阻塞 UI；maxWidthOrHeight 限制最大尺寸 1024px）
+  // 微信/手机相册的照片通常是 4032×3024，1024 已经远超头像所需
+  const compressed = await imageCompression(file, {
+    maxSizeMB: 0.2,
+    maxWidthOrHeight: 1024,
+    useWebWorker: true,
+    // 保留 EXIF 旋转信息（避免压缩后图变横/竖）
+    exifOrientation: 1
   })
-  return res.url
+  console.log(`[upload] compressed ${(file.size / 1024).toFixed(0)}KB → ${(compressed.size / 1024).toFixed(0)}KB`)
+
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
+  const safeExt = ['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(ext) ? ext : 'jpg'
+  const pathname = `avatars/${playerId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${safeExt}`
+
+  const blob = await upload(pathname, compressed, {
+    access: 'public',
+    handleUploadUrl: '/api/upload-avatar',
+    clientPayload: JSON.stringify({ playerId }),
+    contentType: compressed.type || 'image/jpeg'
+  })
+  return blob.url
 }

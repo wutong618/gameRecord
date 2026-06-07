@@ -122,10 +122,6 @@ async function getAllPlayers() {
   cacheSet(PLAYERS_CACHE_KEY, players, 5e3);
   return players;
 }
-async function getPlayer(id) {
-  const { rows } = await sql`SELECT id, name, avatar_url, color FROM players WHERE id = ${id} LIMIT 1`;
-  return rows[0] ? rowToPlayer(rows[0]) : null;
-}
 async function setPlayerAvatar(id, avatarUrl) {
   await sql`UPDATE players SET avatar_url = ${avatarUrl} WHERE id = ${id}`;
   cacheInvalidate("players:");
@@ -204,5 +200,5 @@ async function listRooms() {
   return list;
 }
 
-export { deleteAllRooms as a, getPlayer as b, deleteRoom as d, getRoom as g, invalidateRoomCache as i, listRooms as l, setPlayerAvatar as s, updateRoomGameData as u };
+export { deleteAllRooms as a, deleteRoom as d, getRoom as g, invalidateRoomCache as i, listRooms as l, setPlayerAvatar as s, updateRoomGameData as u };
 //# sourceMappingURL=room.mjs.map

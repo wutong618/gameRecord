@@ -1,10 +1,10 @@
 {
-  "_JLrTkdGP.js": {
+  "_BWZJSUiw.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "JLrTkdGP.js",
+    "file": "BWZJSUiw.js",
     "name": "vue.-sixQ7xP",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
@@ -15,13 +15,13 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "DnJvkL8-.js",
+    "file": "CLfTqdBA.js",
     "name": "error-404",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_JLrTkdGP.js"
+      "_BWZJSUiw.js"
     ],
     "css": [
       "error-404.Dgo7RJym.css"
@@ -38,12 +38,12 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "BYBnD_iw.js",
+    "file": "B0euEFlG.js",
     "name": "error-500",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_JLrTkdGP.js",
+      "_BWZJSUiw.js",
       "node_modules/nuxt/dist/app/entry.js"
     ],
     "css": [
@@ -56,12 +56,32 @@
     "prefetch": true,
     "preload": true
   },
+  "node_modules/@vercel/blob/dist/client.js": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "DwNgJTIY.js",
+    "name": "client",
+    "src": "node_modules/@vercel/blob/dist/client.js",
+    "isDynamicEntry": true
+  },
+  "node_modules/browser-image-compression/dist/browser-image-compression.mjs": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "CBVwGt6Q.js",
+    "name": "browser-image-compression",
+    "src": "node_modules/browser-image-compression/dist/browser-image-compression.mjs",
+    "isDynamicEntry": true
+  },
   "node_modules/nuxt/dist/app/entry.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CjepRIQm.js",
+    "file": "DRIffEl5.js",
     "name": "entry",
     "src": "node_modules/nuxt/dist/app/entry.js",
     "isEntry": true,
@@ -84,12 +104,16 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "DdooBdwQ.js",
+    "file": "BhFJvm2l.js",
     "name": "index",
     "src": "pages/index.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
+    ],
+    "dynamicImports": [
+      "node_modules/@vercel/blob/dist/client.js",
+      "node_modules/browser-image-compression/dist/browser-image-compression.mjs"
     ],
     "css": [
       "index.aAGe5V1g.css"

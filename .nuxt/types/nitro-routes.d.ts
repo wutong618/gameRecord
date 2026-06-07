@@ -13,7 +13,7 @@ declare module "nitropack/types" {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/rooms.get').default>>>>
     }
     '/api/upload-avatar': {
-      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/upload-avatar.post').default>>>>
+      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/upload-avatar').default>>>>
     }
     '/__nuxt_error': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/nuxt/dist/core/runtime/nitro/renderer').default>>>>
