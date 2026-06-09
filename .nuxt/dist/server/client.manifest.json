@@ -1,27 +1,321 @@
 {
-  "_QG2DPaTz.js": {
+  "_D3R2cIpl.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "QG2DPaTz.js",
+    "file": "D3R2cIpl.js",
     "name": "vue.-sixQ7xP",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
     ]
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Audiowide-normal-400-latin-ext.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Audiowide-normal-400-latin-ext.DBgo3hnO.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Audiowide-normal-400-latin-ext.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Audiowide-normal-400-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Audiowide-normal-400-latin.6GFCX7ni.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Audiowide-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Bungee-normal-400-latin-ext.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Bungee-normal-400-latin-ext.DWzJMwsA.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Bungee-normal-400-latin-ext.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Bungee-normal-400-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Bungee-normal-400-latin.Dfnurram.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Bungee-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Bungee-normal-400-vietnamese.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Bungee-normal-400-vietnamese.B6gKbkHm.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Bungee-normal-400-vietnamese.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-cyrillic.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-cyrillic.Buze_B52.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-cyrillic.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-greek.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-greek.D3oMJlXt.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-greek.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-latin-ext.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-latin-ext.DIC32ArD.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-latin-ext.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-latin.6fWv1k7M.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-vietnamese.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-vietnamese.BehTv68k.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-vietnamese.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-500-cyrillic.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-cyrillic.Buze_B52.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-cyrillic.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-500-greek.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-greek.D3oMJlXt.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-greek.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-500-latin-ext.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-latin-ext.DIC32ArD.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-latin-ext.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-500-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-latin.6fWv1k7M.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-500-vietnamese.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-vietnamese.BehTv68k.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-vietnamese.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-700-cyrillic.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-cyrillic.Buze_B52.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-cyrillic.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-700-greek.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-greek.D3oMJlXt.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-greek.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-700-latin-ext.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-latin-ext.DIC32ArD.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-latin-ext.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-700-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-latin.6fWv1k7M.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-700-vietnamese.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "JetBrains_Mono-normal-400-vietnamese.BehTv68k.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/JetBrains_Mono-normal-400-vietnamese.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-cyrillic.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-cyrillic.CRA5_Pf1.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-cyrillic.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-latin-ext.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-latin-ext.CqPqLCfe.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-latin-ext.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-latin.DYAKOyvl.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-text.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-text.BfzSEbFz.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-text.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-vietnamese.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-vietnamese.y5SU35Rl.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-vietnamese.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-500-cyrillic.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-cyrillic.CRA5_Pf1.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-cyrillic.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-500-latin-ext.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-latin-ext.CqPqLCfe.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-latin-ext.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-500-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-latin.DYAKOyvl.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-500-text.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-text.BfzSEbFz.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-text.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-500-vietnamese.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-vietnamese.y5SU35Rl.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-vietnamese.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-700-cyrillic.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-cyrillic.CRA5_Pf1.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-cyrillic.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-700-latin-ext.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-latin-ext.CqPqLCfe.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-latin-ext.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-700-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-latin.DYAKOyvl.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-700-text.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-text.BfzSEbFz.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-text.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-700-vietnamese.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-vietnamese.y5SU35Rl.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-vietnamese.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-900-cyrillic.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-cyrillic.CRA5_Pf1.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-cyrillic.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-900-latin-ext.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-latin-ext.CqPqLCfe.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-latin-ext.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-900-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-latin.DYAKOyvl.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-900-text.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-text.BfzSEbFz.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-text.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-900-vietnamese.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Noto_Sans_SC-normal-400-vietnamese.y5SU35Rl.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Noto_Sans_SC-normal-400-vietnamese.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Orbitron-normal-400-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Orbitron-normal-400-latin.Du7j2Vp2.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Orbitron-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Orbitron-normal-500-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Orbitron-normal-400-latin.Du7j2Vp2.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Orbitron-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Orbitron-normal-600-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Orbitron-normal-400-latin.Du7j2Vp2.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Orbitron-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Orbitron-normal-700-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Orbitron-normal-400-latin.Du7j2Vp2.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Orbitron-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Orbitron-normal-800-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Orbitron-normal-400-latin.Du7j2Vp2.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Orbitron-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Orbitron-normal-900-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Orbitron-normal-400-latin.Du7j2Vp2.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Orbitron-normal-400-latin.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Russo_One-normal-400-cyrillic.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Russo_One-normal-400-cyrillic.BXZIn0h3.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Russo_One-normal-400-cyrillic.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Russo_One-normal-400-latin-ext.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Russo_One-normal-400-latin-ext.CezFp_e4.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Russo_One-normal-400-latin-ext.woff2"
+  },
+  "node_modules/.cache/nuxt-google-fonts/fonts/Russo_One-normal-400-latin.woff2": {
+    "resourceType": "font",
+    "mimeType": "font/woff2",
+    "file": "Russo_One-normal-400-latin.BfOuQF9V.woff2",
+    "src": "node_modules/.cache/nuxt-google-fonts/fonts/Russo_One-normal-400-latin.woff2"
   },
   "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "dMkku49m.js",
+    "file": "nSWcFIly.js",
     "name": "error-404",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_QG2DPaTz.js"
+      "_D3R2cIpl.js"
     ],
     "css": [
       "error-404.Dgo7RJym.css"
@@ -38,12 +332,12 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CvARuqq8.js",
+    "file": "c-as6KAB.js",
     "name": "error-500",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_QG2DPaTz.js",
+      "_D3R2cIpl.js",
       "node_modules/nuxt/dist/app/entry.js"
     ],
     "css": [
@@ -81,7 +375,7 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CSO5MFo7.js",
+    "file": "B5GbKE4r.js",
     "name": "entry",
     "src": "node_modules/nuxt/dist/app/entry.js",
     "isEntry": true,
@@ -90,21 +384,137 @@
       "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue"
     ],
     "css": [
-      "entry.Cdwf0yc5.css"
+      "entry.WVlbrbJL.css"
+    ],
+    "assets": [
+      "Audiowide-normal-400-latin-ext.DBgo3hnO.woff2",
+      "Audiowide-normal-400-latin.6GFCX7ni.woff2",
+      "Bungee-normal-400-vietnamese.B6gKbkHm.woff2",
+      "Bungee-normal-400-latin-ext.DWzJMwsA.woff2",
+      "Bungee-normal-400-latin.Dfnurram.woff2",
+      "JetBrains_Mono-normal-400-cyrillic.Buze_B52.woff2",
+      "JetBrains_Mono-normal-400-greek.D3oMJlXt.woff2",
+      "JetBrains_Mono-normal-400-vietnamese.BehTv68k.woff2",
+      "JetBrains_Mono-normal-400-latin-ext.DIC32ArD.woff2",
+      "JetBrains_Mono-normal-400-latin.6fWv1k7M.woff2",
+      "Noto_Sans_SC-normal-400-text.BfzSEbFz.woff2",
+      "Noto_Sans_SC-normal-400-cyrillic.CRA5_Pf1.woff2",
+      "Noto_Sans_SC-normal-400-vietnamese.y5SU35Rl.woff2",
+      "Noto_Sans_SC-normal-400-latin-ext.CqPqLCfe.woff2",
+      "Noto_Sans_SC-normal-400-latin.DYAKOyvl.woff2",
+      "Orbitron-normal-400-latin.Du7j2Vp2.woff2",
+      "Russo_One-normal-400-cyrillic.BXZIn0h3.woff2",
+      "Russo_One-normal-400-latin-ext.CezFp_e4.woff2",
+      "Russo_One-normal-400-latin.BfOuQF9V.woff2"
     ]
   },
-  "entry.Cdwf0yc5.css": {
-    "file": "entry.Cdwf0yc5.css",
+  "entry.WVlbrbJL.css": {
+    "file": "entry.WVlbrbJL.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
+  },
+  "Audiowide-normal-400-latin-ext.DBgo3hnO.woff2": {
+    "file": "Audiowide-normal-400-latin-ext.DBgo3hnO.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Audiowide-normal-400-latin.6GFCX7ni.woff2": {
+    "file": "Audiowide-normal-400-latin.6GFCX7ni.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Bungee-normal-400-vietnamese.B6gKbkHm.woff2": {
+    "file": "Bungee-normal-400-vietnamese.B6gKbkHm.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Bungee-normal-400-latin-ext.DWzJMwsA.woff2": {
+    "file": "Bungee-normal-400-latin-ext.DWzJMwsA.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Bungee-normal-400-latin.Dfnurram.woff2": {
+    "file": "Bungee-normal-400-latin.Dfnurram.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "JetBrains_Mono-normal-400-cyrillic.Buze_B52.woff2": {
+    "file": "JetBrains_Mono-normal-400-cyrillic.Buze_B52.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "JetBrains_Mono-normal-400-greek.D3oMJlXt.woff2": {
+    "file": "JetBrains_Mono-normal-400-greek.D3oMJlXt.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "JetBrains_Mono-normal-400-vietnamese.BehTv68k.woff2": {
+    "file": "JetBrains_Mono-normal-400-vietnamese.BehTv68k.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "JetBrains_Mono-normal-400-latin-ext.DIC32ArD.woff2": {
+    "file": "JetBrains_Mono-normal-400-latin-ext.DIC32ArD.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "JetBrains_Mono-normal-400-latin.6fWv1k7M.woff2": {
+    "file": "JetBrains_Mono-normal-400-latin.6fWv1k7M.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Noto_Sans_SC-normal-400-text.BfzSEbFz.woff2": {
+    "file": "Noto_Sans_SC-normal-400-text.BfzSEbFz.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Noto_Sans_SC-normal-400-cyrillic.CRA5_Pf1.woff2": {
+    "file": "Noto_Sans_SC-normal-400-cyrillic.CRA5_Pf1.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Noto_Sans_SC-normal-400-vietnamese.y5SU35Rl.woff2": {
+    "file": "Noto_Sans_SC-normal-400-vietnamese.y5SU35Rl.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Noto_Sans_SC-normal-400-latin-ext.CqPqLCfe.woff2": {
+    "file": "Noto_Sans_SC-normal-400-latin-ext.CqPqLCfe.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Noto_Sans_SC-normal-400-latin.DYAKOyvl.woff2": {
+    "file": "Noto_Sans_SC-normal-400-latin.DYAKOyvl.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Orbitron-normal-400-latin.Du7j2Vp2.woff2": {
+    "file": "Orbitron-normal-400-latin.Du7j2Vp2.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Russo_One-normal-400-cyrillic.BXZIn0h3.woff2": {
+    "file": "Russo_One-normal-400-cyrillic.BXZIn0h3.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Russo_One-normal-400-latin-ext.CezFp_e4.woff2": {
+    "file": "Russo_One-normal-400-latin-ext.CezFp_e4.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
+  },
+  "Russo_One-normal-400-latin.BfOuQF9V.woff2": {
+    "file": "Russo_One-normal-400-latin.BfOuQF9V.woff2",
+    "resourceType": "font",
+    "mimeType": "font/woff2"
   },
   "pages/index.vue": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "-mcvNFRW.js",
+    "file": "C9BAdNB4.js",
     "name": "index",
     "src": "pages/index.vue",
     "isDynamicEntry": true,
@@ -116,11 +526,11 @@
       "node_modules/@vercel/blob/dist/client.js"
     ],
     "css": [
-      "index.BIeAip5B.css"
+      "index.B3_m-jxW.css"
     ]
   },
-  "index.BIeAip5B.css": {
-    "file": "index.BIeAip5B.css",
+  "index.B3_m-jxW.css": {
+    "file": "index.B3_m-jxW.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true

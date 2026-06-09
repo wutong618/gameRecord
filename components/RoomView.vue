@@ -1,34 +1,52 @@
 <template>
-  <div class="min-h-screen bg-slate-900 pb-28">
+  <div class="min-h-screen pb-28 safe-area-bottom">
     <!-- 顶部 -->
-    <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800">
+    <header
+      v-if="currentSession"
+      class="sticky top-0 z-40 glass-card-elevated border-b border-slate-700/50 scan-line-band"
+    >
       <div class="p-4">
+        <!-- 顶部按钮行 -->
         <div class="flex items-center justify-between mb-4 gap-2">
           <button
-            class="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0"
+            class="btn-cyber-ghost w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
             @click="$emit('leave')"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
+            <ArrowLeft class="w-4 h-4" :stroke-width="2.5" />
           </button>
-          <div class="flex-1 flex justify-center gap-2">
+
+          <!-- 房间信息：名称 + 座位状态 -->
+          <div class="flex-1 flex flex-col items-center min-w-0 px-2">
+            <div
+              class="font-pingfang text-[17px] text-white truncate max-w-full tracking-[0.05em]"
+            >
+              {{ currentSession.name || '未命名房间' }}
+            </div>
+            <div class="flex items-center gap-2 mt-0.5 font-num">
+              <span class="text-[10px] tracking-wider text-slate-500 font-bold">
+                {{ seatedCount }} / {{ currentSession.maxPlayers }} 座
+              </span>
+              <span class="text-slate-700">·</span>
+              <span class="text-[10px] tracking-wider text-slate-500 font-bold">
+                {{ currentSession.gameData.rounds.length }} 轮
+              </span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1.5 shrink-0">
             <CopyLinkButton size="sm" />
             <button
-              class="px-3 py-1.5 rounded-lg font-bold text-xs bg-slate-800 text-neon-pink border border-neon-pink/30 hover:bg-slate-700 transition-all"
+              class="btn-cyber-ghost w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-neon-pink"
               @click="askDeleteRoom = true"
+              title="删除整局"
             >
-              删除整局
+              <Trash2 class="w-4 h-4" :stroke-width="2.5" />
             </button>
-          </div>
-          <div class="w-9 shrink-0 flex justify-end">
-            <div v-if="isLoading" class="w-2 h-2 rounded-full bg-neon-blue animate-pulse" />
-            <div v-else class="w-2 h-2 rounded-full bg-slate-700" />
           </div>
         </div>
 
-        <!-- 座位网格 -->
-        <div v-if="currentSession" class="px-1">
+        <!-- 座位网格（每个玩家带分数 + 发光） -->
+        <div class="px-1">
           <PlayerGrid
             :session="currentSession"
             :current-user="currentUser"
@@ -38,126 +56,173 @@
         </div>
       </div>
 
-      <!-- Tab 切换 -->
-      <div v-if="currentSession" class="flex px-4 gap-2 mb-2">
+      <!-- Tab 切换：滑块版 -->
+      <div class="relative flex px-4 gap-0 mb-3">
+        <!-- 滑块底层（带圆角矩形） -->
+        <div
+          class="absolute top-1 bottom-1 w-[calc(50%-0.5rem)] rounded-lg pointer-events-none transition-transform duration-300 ease-out"
+          :class="activeTab === 'bar' ? 'translate-x-0' : 'translate-x-full'"
+          :style="{
+            background: activeTab === 'bar'
+              ? 'linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(57, 255, 20, 0.15))'
+              : 'linear-gradient(135deg, rgba(255, 0, 255, 0.2), rgba(57, 255, 20, 0.15))',
+            boxShadow: '0 0 12px rgba(0, 255, 255, 0.25), inset 0 0 0 1px rgba(0, 255, 255, 0.3)'
+          }"
+        />
         <button
-          class="flex-1 py-2 rounded-lg font-bold text-sm transition-all"
-          :class="activeTab === 'bar' ? 'bg-neon-blue text-slate-900' : 'bg-slate-800 text-slate-400'"
+          class="relative flex-1 py-2 rounded-lg font-heading text-[11px] font-bold tracking-[0.2em] uppercase transition-colors duration-200 flex items-center justify-center gap-1.5 z-10"
+          :class="activeTab === 'bar' ? 'text-glow-cyan' : 'text-slate-500'"
           @click="activeTab = 'bar'"
         >
+          <BarChart3 class="w-3.5 h-3.5" :stroke-width="2.5" />
           总分对比
         </button>
         <button
-          class="flex-1 py-2 rounded-lg font-bold text-sm transition-all"
-          :class="activeTab === 'line' ? 'bg-neon-blue text-slate-900' : 'bg-slate-800 text-slate-400'"
+          class="relative flex-1 py-2 rounded-lg font-heading text-[11px] font-bold tracking-[0.2em] uppercase transition-colors duration-200 flex items-center justify-center gap-1.5 z-10"
+          :class="activeTab === 'line' ? 'text-glow-pink' : 'text-slate-500'"
           @click="activeTab = 'line'"
         >
+          <LineChart class="w-3.5 h-3.5" :stroke-width="2.5" />
           趋势图
         </button>
       </div>
     </header>
 
     <!-- 图表 -->
-    <div v-if="currentSession" class="p-4">
-      <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
-        <ScoreBarChart
-          v-if="activeTab === 'bar'"
-          :players="seatedPlayers"
-          :total-scores="totalScores"
-        />
-        <ScoreTrendChart
-          v-else
-          :players="seatedPlayers"
-          :rounds="currentSession.gameData.rounds"
-        />
+    <Transition name="fade-swap" mode="out-in">
+      <div v-if="currentSession && activeTab === 'bar'" key="bar" class="p-4">
+        <div class="glass-card rounded-2xl p-4">
+          <ScoreBarChart
+            :players="seatedPlayers"
+            :total-scores="totalScores"
+          />
+        </div>
       </div>
-    </div>
+      <div v-else-if="currentSession && activeTab === 'line'" key="line" class="p-4">
+        <div class="glass-card rounded-2xl p-4">
+          <ScoreTrendChart
+            :players="seatedPlayers"
+            :rounds="currentSession.gameData.rounds"
+          />
+        </div>
+      </div>
+    </Transition>
 
     <!-- 历史轮次 -->
     <div v-if="currentSession" class="px-4">
-      <h2 class="text-lg font-bold text-slate-300 mb-3">
-        历史记录 ({{ currentSession.gameData.rounds.length }} 轮)
+      <h2 class="font-heading text-[11px] font-bold text-slate-300 mb-3 flex items-center gap-2 uppercase tracking-[0.25em]">
+        <History class="w-3.5 h-3.5 text-neon-blue" :stroke-width="2.5" />
+        历史记录
+        <span class="text-slate-600 tracking-normal font-num">({{ currentSession.gameData.rounds.length }})</span>
       </h2>
 
-      <div v-if="reversedRounds.length > 0" class="space-y-2">
-        <RoundListItem
+      <TransitionGroup
+        v-if="reversedRounds.length > 0"
+        name="round-list"
+        tag="div"
+        class="space-y-2"
+      >
+        <div
           v-for="round in reversedRounds"
           :key="round.roundNumber"
-          :round="round"
-          :players="seatedPlayers"
-          @edit="openEditModal"
-          @delete="confirmDeleteRound"
-          @detail="openDetail"
-        />
-      </div>
+          :class="[
+            'rounded-xl',
+            lastInsertedRound === round.roundNumber ? 'animate-flash-green' : ''
+          ]"
+        >
+          <RoundListItem
+            :round="round"
+            :players="seatedPlayers"
+            @edit="openEditModal"
+            @delete="confirmDeleteRound"
+            @detail="openDetail"
+          />
+        </div>
+      </TransitionGroup>
 
-      <div v-else class="text-center py-12 text-slate-500">
-        <p>还没有记录</p>
-        <p class="text-sm">点击下方按钮开始记录</p>
+      <div v-else class="glass-card rounded-2xl p-10 text-center">
+        <div class="w-14 h-14 rounded-2xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-center mx-auto mb-3">
+          <Inbox class="w-7 h-7 text-slate-600" :stroke-width="1.5" />
+        </div>
+        <p class="text-slate-500 text-sm">还没有记录</p>
+        <p class="text-slate-600 text-xs mt-1">点击下方按钮开始记录</p>
       </div>
     </div>
 
     <!-- 加载/失败状态 -->
     <div v-if="!currentSession" class="px-4 pt-8">
-      <!-- 加载中：单次拉取 或 重试中（4 次重试期间） -->
+      <!-- 加载中：单次拉取 或 重试中 -->
       <div
         v-if="isLoading || isRetrying"
-        class="text-center py-16 text-slate-400"
+        class="glass-card rounded-2xl p-10 text-center"
       >
-        <svg class="w-10 h-10 mx-auto mb-3 animate-spin text-neon-blue" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-        </svg>
-        <p class="font-bold">正在进入房间…</p>
-        <p v-if="isRetrying" class="text-xs text-slate-500 mt-1">
+        <div class="relative w-16 h-16 mx-auto mb-4">
+          <div class="absolute inset-0 rounded-full border-2 border-neon-blue/20" />
+          <div class="absolute inset-0 rounded-full border-2 border-transparent border-t-neon-blue animate-spin" />
+          <LoaderCircle class="absolute inset-0 m-auto w-7 h-7 text-neon-blue/60" :stroke-width="2" />
+        </div>
+        <p class="font-bold text-glow-cyan text-base">正在进入房间…</p>
+        <p v-if="isRetrying" class="text-[11px] text-slate-500 mt-1.5 font-mono">
           首次连接可能稍慢（5-10s），重试中 {{ retryAttempt }}/4
         </p>
       </div>
       <!-- 真正失败：4 次都失败 -->
-      <div v-else class="bg-slate-800/70 rounded-2xl p-6 border border-neon-pink/30 text-center">
-        <div class="text-3xl mb-2">⚠️</div>
+      <div v-else class="glass-card rounded-2xl p-6 border-glow-pink text-center">
+        <div class="w-12 h-12 rounded-xl bg-neon-pink/10 border border-neon-pink/30 flex items-center justify-center mx-auto mb-3">
+          <AlertCircle class="w-7 h-7 text-neon-pink" :stroke-width="2" />
+        </div>
         <p class="text-white font-bold mb-1">加载失败</p>
         <p class="text-slate-400 text-sm mb-4">{{ loadError || '未知错误' }}</p>
         <button
-          class="px-5 py-2.5 rounded-xl bg-neon-blue text-slate-900 font-bold text-sm active:scale-95 transition-all"
+          class="btn-cyber-primary px-5 py-2.5 rounded-xl text-sm flex items-center gap-2 mx-auto"
           :disabled="isLoading"
           @click="retry"
         >
+          <RefreshCw class="w-4 h-4" :stroke-width="2.5" />
           重新加载
         </button>
       </div>
     </div>
 
     <!-- 底部按钮 -->
-    <div v-if="currentSession && isCurrentUserSeated" class="fixed bottom-6 left-4 right-4 z-30">
+    <div v-if="currentSession && isCurrentUserSeated" class="fixed bottom-6 left-4 right-4 z-30 safe-area-bottom">
       <button
-        class="w-full py-5 rounded-2xl font-black text-xl bg-gradient-to-r from-neon-green to-emerald-500 text-slate-900 shadow-lg shadow-neon-green/30 active:scale-95 transition-all flex items-center justify-center gap-2"
+        class="btn-cyber-primary w-full py-5 rounded-2xl text-xl flex items-center justify-center gap-2.5 relative overflow-hidden"
         :disabled="isSaving"
-        :class="{ 'opacity-70 cursor-not-allowed': isSaving }"
         @click="openAddModal"
       >
-        <svg v-if="isSaving" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-        </svg>
-        <span>🎯 {{ isSaving ? '保存中...' : '记录新一轮' }}</span>
+        <span v-if="isSaving" class="flex items-center gap-2">
+          <LoaderCircle class="w-5 h-5 animate-spin" :stroke-width="2.5" />
+          保存中…
+        </span>
+        <span v-else class="flex items-center gap-2">
+          <Target class="w-5 h-5" :stroke-width="2.5" />
+          记录新一轮
+        </span>
       </button>
     </div>
 
     <!-- 坐下提示（用户未在座位上时） -->
-    <div v-if="currentSession && !isCurrentUserSeated && !autoSittingDown" class="fixed bottom-6 left-4 right-4 z-30">
-      <div class="bg-slate-800/95 rounded-2xl p-4 border border-neon-blue/30 text-center">
-        <p class="text-white text-sm mb-2">点击空位 [+] 坐下</p>
+    <div
+      v-if="currentSession && !isCurrentUserSeated && !autoSittingDown"
+      class="fixed bottom-6 left-4 right-4 z-30"
+    >
+      <div class="glass-card-elevated rounded-2xl p-4 border-glow-blue text-center">
+        <p class="text-slate-200 text-sm mb-3 flex items-center justify-center gap-1.5">
+          <MousePointerClick class="w-4 h-4 text-neon-blue" :stroke-width="2.5" />
+          点击空位 [+] 坐下
+        </p>
         <button
-          class="px-4 py-2 rounded-xl bg-neon-blue text-slate-900 font-bold text-sm"
+          class="btn-cyber-ghost px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 mx-auto"
           @click="autoSit"
         >
+          <Sparkles class="w-4 h-4" :stroke-width="2.5" />
           自动坐下
         </button>
       </div>
     </div>
 
-    <!-- 录入弹窗：传 seats（含 seatIndex）让弹窗按座位顺序渲染 -->
+    <!-- 录入弹窗 -->
     <ScoreInputModal
       v-if="currentSession"
       :show="showModal"
@@ -212,16 +277,20 @@ import { useUser } from '~/composables/useUser'
 import { usePolling } from '~/composables/usePolling'
 import { getRoom as fetchRoomApi } from '~/composables/useDb'
 import { useRouter } from 'vue-router'
+import {
+  ArrowLeft, Trash2, BarChart3, LineChart, History, Inbox,
+  LoaderCircle, AlertCircle, RefreshCw, Target, MousePointerClick, Sparkles
+} from 'lucide-vue-next'
 import type { User } from '~/types'
 
 const props = defineProps<{ roomId: string }>()
 defineEmits<{ (e: 'leave'): void }>()
 
-const { currentUser, init: initUser, refresh: refreshUser } = useUser()
+const { currentUser, init: initUser } = useUser()
 const router = useRouter()
 const {
   currentSession, isLoading, isSaving, loadError,
-  totalScores, reversedRounds, cumulativeScores,
+  totalScores, reversedRounds,
   loadRoom, sitDown, addRound, updateRound, deleteRound, deleteWholeRoom
 } = useRoom()
 
@@ -238,15 +307,20 @@ const autoSittingDown = ref(false)
 const showProfile = ref(false)
 const showDetail = ref(false)
 const detailIndex = ref(0)
-const isRetrying = ref(false)   // onMounted 4 次重试阶段
-const retryAttempt = ref(0)     // 当前重试次数（1-4）
+const isRetrying = ref(false)
+const retryAttempt = ref(0)
+const lastInsertedRound = ref<number | null>(null)
 
 const isCurrentUserSeated = computed(() => {
   if (!currentSession.value || !currentUser.value) return false
   return currentSession.value.seats.some(s => s.user?.id === currentUser.value!.id)
 })
 
-// 给图表用的 players 列表（按座位顺序，未占位的过滤掉）
+const seatedCount = computed(() => {
+  if (!currentSession.value) return 0
+  return currentSession.value.seats.filter(s => s.user).length
+})
+
 const seatedPlayers = computed(() => {
   if (!currentSession.value) return []
   return currentSession.value.seats
@@ -254,10 +328,16 @@ const seatedPlayers = computed(() => {
     .filter((u): u is User => u !== null)
 })
 
+// 监听新轮次插入 → 短暂高亮
+watch(() => currentSession.value?.gameData.rounds.length, (newLen, oldLen) => {
+  if (typeof newLen === 'number' && typeof oldLen === 'number' && newLen > oldLen && newLen > 0) {
+    lastInsertedRound.value = newLen
+    setTimeout(() => { lastInsertedRound.value = null }, 1200)
+  }
+})
+
 onMounted(async () => {
   await initUser()
-  // 主动重试 4 次：刚加入的链接可能 server 端 cold start 慢，多试几次避免中间闪"加载失败"
-  // 关键：重试期间一直显示"加载中"——仅当 4 次都失败且经过缓冲延迟后才显示"加载失败"
   isRetrying.value = true
   loadError.value = null
   let session = null
@@ -265,9 +345,8 @@ onMounted(async () => {
     retryAttempt.value = i + 1
     session = await loadRoom(props.roomId)
     if (session) break
-    await new Promise(r => setTimeout(r, 500 * Math.pow(1.6, i)))  // 500/800/1280/2050ms
+    await new Promise(r => setTimeout(r, 500 * Math.pow(1.6, i)))
   }
-  // 哪怕重试用 0ms 完成、4 次都失败，也强制保持"加载中"至少 1.5s，避免闪"加载失败"页
   await new Promise(r => setTimeout(r, 1500))
   isRetrying.value = false
   retryAttempt.value = 0
@@ -276,7 +355,6 @@ onMounted(async () => {
   }
 })
 
-// 8s 轮询
 usePolling(async () => {
   if (!props.roomId) return
   try {
@@ -285,28 +363,17 @@ usePolling(async () => {
       currentSession.value = fresh
       loadError.value = null
     }
-  } catch (e) {
-    // 静默
-  }
+  } catch (e) { /* 静默 */ }
 }, 8000)
 
-// 座位点击
 async function onSeatClick({ seatIndex, user, isSelf }: { seatIndex: number; user: User | null; isSelf: boolean }) {
   if (!currentUser.value) return
-  if (user === null) {
-    // 空位：坐下 / 换座位
-    await doSitDown(seatIndex)
-  } else if (isSelf) {
-    // 自己：弹 ProfileModal
-    showProfile.value = true
-  } else {
-    // 他人：暂不响应
-  }
+  if (user === null) await doSitDown(seatIndex)
+  else if (isSelf) showProfile.value = true
 }
 
 function onProfileSaved(updated: User) {
   currentUser.value = updated
-  // 同步更新 currentSession.seats 里的自己，避免等 8s 轮询
   if (currentSession.value) {
     currentSession.value = {
       ...currentSession.value,
@@ -317,12 +384,10 @@ function onProfileSaved(updated: User) {
   }
 }
 
-// 轮次详情：正向索引（不是倒序）
 const detailRound = computed(() => {
   if (!currentSession.value) return null
   return currentSession.value.gameData.rounds[detailIndex.value] ?? null
 })
-// usersBySeat：按 seatIndex 顺序的用户列表（含空位 null）—— 给详情 Modal 用
 const usersBySeat = computed<(User | null)[]>(() => {
   if (!currentSession.value) return []
   return currentSession.value.seats.map(s => s.user)
@@ -355,9 +420,7 @@ async function doSitDown(seatIndex?: number) {
   }
 }
 
-// 录入：实时拉一次 session，避免轮询延迟导致误判未坐满
 async function openAddModal() {
-  // 先拉一次最新 session
   const fresh = await fetchRoomApi(props.roomId)
   if (fresh) currentSession.value = fresh
   if (!currentSession.value) return
@@ -393,13 +456,11 @@ async function handleScoreSubmit(scores: number[]) {
   } catch (e: any) {
     console.error('[handleScoreSubmit]', e)
     alert('保存失败：' + (e?.statusMessage || e?.data?.statusMessage || e?.message || JSON.stringify(e)))
-    // 不关弹窗，让用户能修改后再试
   } finally {
     isSaving.value = false
   }
 }
 
-// 删除单轮
 function confirmDeleteRound(index: number) {
   roundToDelete.value = index
   askDeleteRound.value = true
@@ -412,19 +473,49 @@ async function executeDeleteRound() {
   askDeleteRound.value = false
 }
 
-// 删除整局
 async function executeDeleteRoom() {
   const ok = await deleteWholeRoom()
   askDeleteRoom.value = false
   if (ok) {
-    // 直接 router.replace，不绕 emit；alert 延后到 HomeView 已经渲染后
     router.replace({ path: '/' })
     setTimeout(() => alert('已删除整局'), 80)
   }
 }
 
-// 重新加载
 async function retry() {
   await loadRoom(props.roomId)
 }
 </script>
+
+<style scoped>
+/* 轮次列表插入/移出动效 */
+.round-list-enter-active,
+.round-list-leave-active {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.round-list-enter-from {
+  opacity: 0;
+  transform: translateY(-16px) scale(0.96);
+}
+.round-list-leave-to {
+  opacity: 0;
+  transform: translateX(20px) scale(0.96);
+}
+.round-list-move {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Tab 切换淡入淡出 */
+.fade-swap-enter-active,
+.fade-swap-leave-active {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fade-swap-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.fade-swap-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+</style>

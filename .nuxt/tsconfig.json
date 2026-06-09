@@ -87,7 +87,7 @@
         "./imports"
       ],
       "#app-manifest": [
-        "./manifest/meta/fe49017a-b64a-46f1-abfd-364b17feee20.json"
+        "./manifest/meta/0dbe1ebe-f47e-4dbb-a17b-6baa0a752029.json"
       ],
       "#build": [
         "."
@@ -123,6 +123,7 @@
     "../.config/nuxt.*",
     "../**/*",
     "../node_modules/@nuxtjs/tailwindcss/runtime",
+    "../node_modules/@nuxtjs/google-fonts/runtime",
     "../node_modules/@nuxt/telemetry/runtime",
     ".."
   ],
@@ -130,6 +131,7 @@
     "../node_modules",
     "../node_modules/nuxt/node_modules",
     "../node_modules/@nuxtjs/tailwindcss/runtime/server",
+    "../node_modules/@nuxtjs/google-fonts/runtime/server",
     "../node_modules/@nuxt/telemetry/runtime/server",
     "../dist",
     "../.output"

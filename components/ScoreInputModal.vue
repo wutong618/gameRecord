@@ -1,93 +1,122 @@
 <template>
   <Teleport to="body">
-    <Transition name="fade">
+    <Transition name="modal-fade">
       <div
         v-if="show"
-        class="fixed inset-0 z-50 flex items-end justify-center"
+        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
         @click.self="close"
       >
-        <!-- 遮罩层 -->
-        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="close" />
+        <!-- 背景：磨砂黑 + 蓝色辉光 -->
+        <div
+          class="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          style="background: radial-gradient(circle at center, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.85));"
+          @click="close"
+        />
 
-        <!-- 弹窗内容 -->
-        <Transition name="slide-up">
+        <div
+          class="relative w-full max-w-lg glass-card-elevated rounded-t-3xl sm:rounded-2xl p-6 border-t sm:border border-slate-700/60 overflow-hidden"
+        >
+          <!-- 顶部装饰条（青色辉光） -->
           <div
-            v-if="show"
-            class="relative w-full max-w-lg bg-slate-800 rounded-t-3xl p-6 shadow-2xl border-t border-slate-700"
-          >
-            <!-- 标题 -->
-            <div class="text-center mb-6">
-              <h3 class="text-2xl font-bold text-white">
-                {{ isEdit ? `修改 R${roundNumber} 轮分数` : '记录新一轮' }}
-              </h3>
-              <p class="text-slate-400 text-sm mt-1">
-                输入本轮得分（输入框可负，"± 切换正负"按钮也可调）
-              </p>
-            </div>
+            class="absolute top-0 inset-x-0 h-px"
+            style="background: linear-gradient(90deg, transparent, #00ffff, transparent); box-shadow: 0 0 12px rgba(0, 255, 255, 0.6);"
+          />
 
-            <!-- 输入框网格：按座位顺序渲染（seatIndex 0..N-1） -->
-            <div class="grid grid-cols-2 gap-4 mb-6">
+          <!-- 标题 -->
+          <div class="text-center mb-6 pt-1">
+            <h3
+              class="font-pingfang text-2xl text-white tracking-[0.05em]"
+              :class="isEdit ? 'text-glow-blue' : 'text-glow-green'"
+            >
+              {{ isEdit ? `修改 R${roundNumber} 轮分数` : '记录新一轮' }}
+            </h3>
+            <p class="text-slate-500 text-xs mt-1.5">
+              输入本轮得分（输入框可负，"± 切换正负"按钮也可调）
+            </p>
+          </div>
+
+          <!-- 输入框网格：按座位顺序渲染 -->
+          <div class="grid grid-cols-2 gap-3 mb-6">
+            <div
+              v-for="seat in seatedSeats"
+              :key="seat.seatIndex"
+              class="flex flex-col items-center"
+            >
+              <!-- 头像 -->
               <div
-                v-for="seat in seatedSeats"
-                :key="seat.seatIndex"
-                class="flex flex-col items-center"
+                class="relative w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden mb-2 ring-2 ring-offset-2 ring-offset-slate-800"
+                :style="{
+                  background: getPlayerBg(seat.user!.avatarColor),
+                  boxShadow: `0 0 16px ${getPlayerGlow(seat.user!.avatarColor)}`,
+                  '--tw-ring-color': getPlayerGlow(seat.user!.avatarColor)
+                }"
               >
-                <div
-                  class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold mb-2 overflow-hidden"
-                  :style="getAvatarStyle(seat.user!.avatarColor)"
-                >
-                  <img
-                    v-if="seat.user!.avatarUrl"
-                    :src="seat.user!.avatarUrl"
-                    class="w-full h-full object-cover"
-                    :alt="seat.user!.nickname"
-                  />
-                  <span v-else>{{ (seat.user!.nickname || '?').slice(0, 1) }}</span>
-                </div>
-                <input
-                  :value="scores[seat.seatIndex] ?? 0"
-                  @input="onScoreInput(seat.seatIndex, $event)"
-                  type="number"
-                  inputmode="numeric"
-                  class="w-full bg-slate-700 text-center text-xl font-bold text-white py-3 px-2 rounded-xl border-2 focus:border-neon-blue outline-none transition-all"
-                  :class="(scores[seat.seatIndex] ?? 0) >= 0 ? 'border-slate-600 focus:border-neon-green' : 'border-slate-600 focus:border-neon-pink'"
-                  placeholder="0"
+                <img
+                  v-if="seat.user!.avatarUrl"
+                  :src="seat.user!.avatarUrl"
+                  class="w-full h-full object-cover"
+                  :alt="seat.user!.nickname"
                 />
-                <button
-                  type="button"
-                  class="mt-1.5 text-xs text-slate-400 hover:text-white px-2 py-0.5 rounded border border-slate-700 hover:border-slate-500 transition-colors"
-                  :class="(scores[seat.seatIndex] ?? 0) < 0 ? 'text-neon-pink border-neon-pink/40' : ''"
-                  @click="toggleSign(seat.seatIndex)"
-                >
-                  ± 切换正负
-                </button>
+                <span v-else>{{ (seat.user!.nickname || '?').slice(0, 1) }}</span>
               </div>
-            </div>
 
-            <!-- 按钮组 -->
-            <div class="flex gap-4">
+              <!-- 昵称（小） -->
+              <div class="text-[11px] text-slate-300 truncate max-w-full mb-1.5 px-1 text-center">
+                {{ seat.user!.nickname }}
+              </div>
+
+              <!-- 分数输入框（聚焦霓虹光晕） -->
+              <input
+                :value="scores[seat.seatIndex] ?? 0"
+                @input="onScoreInput(seat.seatIndex, $event)"
+                @focus="onFocus(seat.seatIndex)"
+                @blur="onBlur(seat.seatIndex)"
+                type="number"
+                inputmode="numeric"
+                class="font-score w-full bg-slate-900/60 text-center text-2xl py-2.5 px-2 rounded-xl border-2 outline-none transition-all duration-200 placeholder:text-slate-700"
+                :class="[
+                  isFocused(seat.seatIndex)
+                    ? (scores[seat.seatIndex] >= 0
+                        ? 'border-neon-green/70 shadow-[0_0_16px_rgba(57,255,20,0.4)]'
+                        : 'border-neon-pink/70 shadow-[0_0_16px_rgba(255,0,255,0.4)]')
+                    : 'border-slate-700/60',
+                  (scores[seat.seatIndex] ?? 0) >= 0 ? 'text-glow-green' : 'text-glow-pink'
+                ]"
+                placeholder="0"
+              />
+
+              <!-- ± 按钮 -->
               <button
-                class="flex-1 py-4 rounded-xl text-lg font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition-all disabled:opacity-50"
-                :disabled="saving"
-                @click="close"
+                type="button"
+                class="btn-cyber-ghost mt-2 text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-md flex items-center gap-1 active:scale-95"
+                @click="toggleSign(seat.seatIndex)"
               >
-                取消
-              </button>
-              <button
-                class="flex-1 py-4 rounded-xl text-lg font-bold bg-gradient-to-r from-neon-green to-emerald-500 text-slate-900 hover:opacity-90 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
-                :disabled="saving"
-                @click="confirm"
-              >
-                <svg v-if="saving" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                  <path class="opacity-75" fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                </svg>
-                <span>{{ saving ? '保存中...' : (isEdit ? '保存修改' : '确认记录') }}</span>
+                <span class="text-base leading-none">±</span>
+                <span>切换正负</span>
               </button>
             </div>
           </div>
-        </Transition>
+
+          <!-- 按钮组 -->
+          <div class="flex gap-3">
+            <button
+              class="btn-cyber-ghost flex-1 py-3.5 rounded-xl font-pingfang text-base"
+              :disabled="saving"
+              @click="close"
+            >
+              取消
+            </button>
+            <button
+              class="btn-cyber-primary flex-1 py-3.5 rounded-xl font-pingfang text-base flex items-center justify-center gap-2"
+              :disabled="saving"
+              @click="confirm"
+            >
+              <LoaderCircle v-if="saving" class="w-5 h-5 animate-spin" :stroke-width="2.5" />
+              <Check v-else class="w-5 h-5" :stroke-width="2.5" />
+              {{ saving ? '保存中…' : (isEdit ? '保存修改' : '确认记录') }}
+            </button>
+          </div>
+        </div>
       </div>
     </Transition>
   </Teleport>
@@ -96,10 +125,11 @@
 <script setup lang="ts">
 import type { Seat, User } from '~/types'
 import { PLAYER_COLORS } from '~/types'
+import { LoaderCircle, Check } from 'lucide-vue-next'
 
 const props = defineProps<{
   show: boolean
-  seats: Seat[]                                    // 整个 seats 数组（含空位也行，按座位渲染）
+  seats: Seat[]
   isEdit?: boolean
   roundNumber?: number
   initialScores?: number[]
@@ -111,12 +141,11 @@ const emit = defineEmits<{
   (e: 'confirm', scores: number[]): void
 }>()
 
-// 已坐的 seats（按座位顺序；弹窗渲染这一组）
 const seatedSeats = computed<Seat[]>(() => props.seats.filter((s): s is Seat & { user: User } => !!s.user))
 
 const scores = ref<number[]>([])
+const focusedIndex = ref<number | null>(null)
 
-// 弹窗打开时初始化：长度 = 房间 max_players（保证 scores 数组与 Round.scores 长度一致）
 watch(() => props.show, (newVal) => {
   if (newVal) {
     const n = props.seats.length || 2
@@ -125,6 +154,8 @@ watch(() => props.show, (newVal) => {
     } else {
       scores.value = new Array(n).fill(0)
     }
+  } else {
+    focusedIndex.value = null
   }
 })
 
@@ -136,14 +167,17 @@ function onScoreInput(seatIndex: number, e: Event) {
   }
 }
 
-function getAvatarStyle(colorKey: string | null) {
+function onFocus(i: number) { focusedIndex.value = i }
+function onBlur(i: number) { if (focusedIndex.value === i) focusedIndex.value = null }
+function isFocused(i: number) { return focusedIndex.value === i }
+
+function getPlayerBg(colorKey: string | null) {
   const key = (colorKey || 'fire-red') as keyof typeof PLAYER_COLORS
-  const colors = PLAYER_COLORS[key] || PLAYER_COLORS['fire-red']
-  return {
-    background: colors.bg,
-    border: `2px solid ${colors.neon}`,
-    boxShadow: `0 0 10px ${colors.neon}40`
-  }
+  return PLAYER_COLORS[key]?.bg || PLAYER_COLORS['fire-red'].bg
+}
+function getPlayerGlow(colorKey: string | null) {
+  const key = (colorKey || 'fire-red') as keyof typeof PLAYER_COLORS
+  return PLAYER_COLORS[key]?.neon || PLAYER_COLORS['fire-red'].neon
 }
 
 function close() {
@@ -159,27 +193,23 @@ function toggleSign(seatIndex: number) {
 function confirm() {
   if (props.saving) return
   emit('confirm', [...scores.value])
-  // 不在这里 close，由父组件在保存完成后关闭
 }
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+/* 弹窗弹性进场（共用 modal-fade） */
+.modal-fade-enter-active {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.fade-enter-from,
-.fade-leave-to {
+.modal-fade-leave-active {
+  transition: all 0.15s ease-in;
+}
+.modal-fade-enter-from {
   opacity: 0;
+  transform: translateY(20px) scale(0.96);
 }
-
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-.slide-up-enter-from,
-.slide-up-leave-to {
-  transform: translateY(100%);
+.modal-fade-leave-to {
   opacity: 0;
+  transform: translateY(8px) scale(0.98);
 }
 </style>

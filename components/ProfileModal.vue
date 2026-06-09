@@ -1,78 +1,140 @@
 <template>
   <Teleport to="body">
-    <Transition name="fade">
+    <Transition name="modal-fade">
       <div
         v-if="show"
-        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
         @click.self="close"
       >
-        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="close" />
         <div
-          class="relative w-full max-w-md bg-slate-800 rounded-t-3xl sm:rounded-2xl p-6 border-t sm:border border-slate-700 max-h-[90vh] overflow-y-auto"
+          class="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          style="background: radial-gradient(circle at center, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.85));"
+          @click="close"
+        />
+
+        <div
+          class="relative w-full max-w-md glass-card-elevated rounded-t-3xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto"
         >
-          <h3 class="text-xl font-bold text-white mb-1 text-center">完善个人资料</h3>
-          <p class="text-slate-400 text-xs text-center mb-5">绑定后可在多设备同步你的身份</p>
+          <!-- 顶部装饰条（青色辉光） -->
+          <div
+            class="absolute top-0 inset-x-0 h-px"
+            style="background: linear-gradient(90deg, transparent, #00ffff, transparent); box-shadow: 0 0 12px rgba(0, 255, 255, 0.6);"
+          />
+
+          <!-- 标题 -->
+          <div class="text-center mb-5 pt-1">
+            <h3 class="font-pingfang text-xl text-white tracking-[0.05em]">完善个人资料</h3>
+            <p class="text-slate-500 text-[11px] mt-1.5">绑定后可在多设备同步你的身份</p>
+          </div>
 
           <!-- 当前头像 / 昵称预览 -->
           <div class="flex flex-col items-center mb-5">
-            <div
-              class="w-20 h-20 rounded-full flex items-center justify-center text-white text-3xl font-bold border-2 overflow-hidden"
-              :style="avatarStyle"
-            >
-              <img v-if="form.avatarUrl" :src="form.avatarUrl" class="w-full h-full object-cover" />
-              <span v-else>{{ (form.nickname || '?').slice(0, 1) }}</span>
+            <div class="relative">
+              <!-- 头像（带霓虹环） -->
+              <div
+                class="w-20 h-20 rounded-full flex items-center justify-center text-white text-3xl font-bold overflow-hidden ring-2 ring-offset-2 ring-offset-slate-800"
+                :style="{
+                  background: avatarStyle.background,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  boxShadow: `0 0 20px ${getGlow(form.avatarColor)}`,
+                  '--tw-ring-color': getGlow(form.avatarColor)
+                }"
+              >
+                <img v-if="form.avatarUrl" :src="form.avatarUrl" class="w-full h-full object-cover" />
+                <span v-else>{{ (form.nickname || '?').slice(0, 1) }}</span>
+              </div>
+              <!-- 上传中扫描光环 -->
+              <div
+                v-if="uploading"
+                class="absolute -inset-1 rounded-full pointer-events-none"
+                style="background: conic-gradient(from 0deg, transparent 0%, #00ffff 50%, transparent 100%); animation: spin 1.2s linear infinite;"
+              >
+                <div class="w-full h-full rounded-full bg-slate-800" style="margin: 2px;" />
+              </div>
             </div>
-            <div class="text-white text-sm font-bold mt-2">{{ form.nickname }}</div>
-            <div v-if="user?.isTemporary" class="text-[10px] text-amber-400">临时身份</div>
+            <div class="font-pingfang text-white text-sm font-bold mt-2.5">{{ form.nickname }}</div>
+            <div
+              v-if="user?.isTemporary"
+              class="text-[10px] uppercase tracking-[0.2em] font-heading text-amber-400 mt-0.5"
+            >
+              临时身份
+            </div>
           </div>
 
-          <!-- Tab 切换 -->
-          <div class="flex gap-2 mb-4">
+          <!-- Tab 切换（滑块式） -->
+          <div class="relative flex mb-4 gap-0">
+            <div
+              class="absolute top-1 bottom-1 w-1/2 rounded-lg pointer-events-none transition-transform duration-300 ease-out"
+              :class="activeTab === 'wechat' ? 'translate-x-0' : 'translate-x-full'"
+              :style="{
+                background: activeTab === 'wechat'
+                  ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(52, 211, 153, 0.2))'
+                  : 'linear-gradient(135deg, rgba(0, 255, 255, 0.25), rgba(57, 255, 20, 0.2))',
+                boxShadow: activeTab === 'wechat'
+                  ? '0 0 12px rgba(16, 185, 129, 0.4), inset 0 0 0 1px rgba(16, 185, 129, 0.4)'
+                  : '0 0 12px rgba(0, 255, 255, 0.4), inset 0 0 0 1px rgba(0, 255, 255, 0.4)'
+              }"
+            />
             <button
-              class="flex-1 py-2 rounded-lg font-bold text-sm transition-all"
-              :class="activeTab === 'wechat' ? 'bg-emerald-500 text-slate-900' : 'bg-slate-700 text-slate-300'"
+              class="relative flex-1 py-2.5 rounded-lg font-heading text-[11px] font-bold tracking-[0.2em] uppercase transition-colors duration-200 flex items-center justify-center gap-1.5 z-10"
+              :class="activeTab === 'wechat' ? 'text-glow-green' : 'text-slate-500'"
               @click="activeTab = 'wechat'"
             >
-              微信一键同步
+              <Sparkles class="w-3.5 h-3.5" :stroke-width="2.5" />
+              微信一键
             </button>
             <button
-              class="flex-1 py-2 rounded-lg font-bold text-sm transition-all"
-              :class="activeTab === 'manual' ? 'bg-neon-blue text-slate-900' : 'bg-slate-700 text-slate-300'"
+              class="relative flex-1 py-2.5 rounded-lg font-heading text-[11px] font-bold tracking-[0.2em] uppercase transition-colors duration-200 flex items-center justify-center gap-1.5 z-10"
+              :class="activeTab === 'manual' ? 'text-glow-cyan' : 'text-slate-500'"
               @click="activeTab = 'manual'"
             >
+              <Settings2 class="w-3.5 h-3.5" :stroke-width="2.5" />
               手动修改
             </button>
           </div>
 
           <!-- 微信 mock -->
           <div v-if="activeTab === 'wechat'" class="space-y-3">
-            <div class="text-xs text-slate-400 leading-relaxed">
-              演示阶段：模拟微信网页授权。生产环境会跳转到微信 OAuth 获取真实 openid。
+            <div class="bg-slate-900/40 rounded-lg p-2.5 border border-slate-700/40 text-[11px] text-slate-400 leading-relaxed">
+              <span class="text-amber-400">⚠</span> 演示阶段：模拟微信网页授权。生产环境会跳转到微信 OAuth 获取真实 openid。
             </div>
-            <input
-              v-model="wechatForm.openid"
-              type="text"
-              placeholder="微信 openid（演示用任意字符串）"
-              class="w-full bg-slate-700 text-white text-sm py-2 px-3 rounded-lg border border-slate-600 focus:border-emerald-500 outline-none"
-            />
-            <input
-              v-model="wechatForm.nickname"
-              type="text"
-              maxlength="20"
-              placeholder="微信昵称"
-              class="w-full bg-slate-700 text-white text-sm py-2 px-3 rounded-lg border border-slate-600 focus:border-emerald-500 outline-none"
-            />
-            <input
-              v-model="wechatForm.avatarUrl"
-              type="text"
-              placeholder="微信头像 URL（演示用任意 URL）"
-              class="w-full bg-slate-700 text-white text-sm py-2 px-3 rounded-lg border border-slate-600 focus:border-emerald-500 outline-none"
-            />
+            <div>
+              <label class="font-heading text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold block mb-1">openid</label>
+              <input
+                v-model="wechatForm.openid"
+                type="text"
+                placeholder="演示用任意字符串"
+                class="font-num w-full bg-slate-900/60 text-white text-sm py-2.5 px-3 rounded-lg border border-slate-700/60 focus:border-neon-green/60 focus:ring-2 focus:ring-neon-green/20 outline-none transition-all placeholder:text-slate-600"
+              />
+            </div>
+            <div>
+              <label class="font-heading text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold block mb-1">昵称</label>
+              <input
+                v-model="wechatForm.nickname"
+                type="text"
+                maxlength="20"
+                placeholder="微信昵称"
+                class="font-pingfang w-full bg-slate-900/60 text-white text-sm py-2.5 px-3 rounded-lg border border-slate-700/60 focus:border-neon-green/60 focus:ring-2 focus:ring-neon-green/20 outline-none transition-all placeholder:text-slate-600"
+              />
+            </div>
+            <div>
+              <label class="font-heading text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold block mb-1">头像 URL</label>
+              <input
+                v-model="wechatForm.avatarUrl"
+                type="text"
+                placeholder="演示用任意 URL"
+                class="font-num w-full bg-slate-900/60 text-white text-sm py-2.5 px-3 rounded-lg border border-slate-700/60 focus:border-neon-green/60 focus:ring-2 focus:ring-neon-green/20 outline-none transition-all placeholder:text-slate-600"
+              />
+            </div>
             <button
-              class="w-full py-3 rounded-xl font-bold bg-emerald-500 text-slate-900 disabled:opacity-50"
+              class="w-full py-3 rounded-xl font-pingfang font-bold text-slate-900 flex items-center justify-center gap-2 disabled:opacity-50 transition-all duration-200 active:scale-95 mt-2"
+              style="background: linear-gradient(135deg, #10b981, #34d399); box-shadow: 0 4px 16px -4px rgba(16, 185, 129, 0.5);"
               :disabled="!wechatForm.openid || !wechatForm.nickname || saving"
               @click="bindWechat"
             >
+              <LoaderCircle v-if="saving" class="w-4 h-4 animate-spin" :stroke-width="2.5" />
+              <Sparkles v-else class="w-4 h-4" :stroke-width="2.5" />
               {{ saving ? '同步中…' : '一键同步并升级为正式用户' }}
             </button>
           </div>
@@ -80,37 +142,49 @@
           <!-- 手动修改 -->
           <div v-else class="space-y-3">
             <div>
-              <label class="text-xs text-slate-400">昵称</label>
+              <label class="font-heading text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold block mb-1">昵称</label>
               <input
                 v-model="form.nickname"
                 type="text"
                 maxlength="20"
-                class="w-full bg-slate-700 text-white text-sm py-2 px-3 rounded-lg border border-slate-600 focus:border-neon-blue outline-none mt-1"
+                class="font-pingfang w-full bg-slate-900/60 text-white text-sm py-2.5 px-3 rounded-lg border border-slate-700/60 focus:border-neon-blue/60 focus:ring-2 focus:ring-neon-blue/20 outline-none transition-all placeholder:text-slate-600"
               />
             </div>
             <div>
-              <label class="text-xs text-slate-400">头像颜色</label>
-              <div class="grid grid-cols-5 gap-2 mt-1">
+              <label class="font-heading text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold block mb-2">头像颜色</label>
+              <div class="grid grid-cols-5 gap-2">
                 <button
                   v-for="key in colorKeys"
                   :key="key"
                   type="button"
-                  class="aspect-square rounded-lg border-2 transition-all"
-                  :class="form.avatarColor === key ? 'border-white scale-110' : 'border-slate-600'"
-                  :style="{ background: COLORS[key].bg }"
+                  class="aspect-square rounded-lg border-2 transition-all duration-200 active:scale-95"
+                  :class="form.avatarColor === key ? 'border-white scale-110 shadow-[0_0_12px_var(--c)]' : 'border-slate-700/60 hover:border-slate-500'"
+                  :style="{
+                    background: COLORS[key].bg,
+                    '--c': COLORS[key].neon,
+                    boxShadow: form.avatarColor === key ? `0 0 16px ${COLORS[key].neon}` : 'none'
+                  }"
                   @click="form.avatarColor = key"
                 />
               </div>
             </div>
             <div>
-              <label class="text-xs text-slate-400">自定义头像图片（png/jpg/webp/gif，≤2MB）</label>
+              <label class="font-heading text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold block mb-1.5">自定义头像</label>
               <button
                 type="button"
-                class="mt-1 w-full py-2 rounded-lg border border-dashed border-slate-600 text-slate-400 text-sm hover:border-neon-blue hover:text-neon-blue transition-colors"
+                class="w-full py-2.5 rounded-lg border border-dashed text-sm transition-all duration-200 flex items-center justify-center gap-2"
+                :class="uploading
+                  ? 'border-neon-cyan/60 text-neon-cyan'
+                  : 'border-slate-700/60 text-slate-400 hover:border-neon-blue/60 hover:text-neon-blue'"
                 :disabled="uploading"
                 @click="triggerUpload"
               >
-                {{ uploading ? '上传中…' : (form.avatarUrl ? '✓ 已上传，点击重新选择' : '点击上传') }}
+                <LoaderCircle v-if="uploading" class="w-4 h-4 animate-spin" :stroke-width="2.5" />
+                <Upload v-else-if="!form.avatarUrl" class="w-4 h-4" :stroke-width="2.5" />
+                <Check v-else class="w-4 h-4 text-neon-green" :stroke-width="2.5" />
+                <span>
+                  {{ uploading ? '上传中…' : (form.avatarUrl ? '已上传，点击重新选择' : '点击上传（≤2MB）') }}
+                </span>
               </button>
               <input
                 ref="fileInput"
@@ -121,16 +195,18 @@
               />
             </div>
             <button
-              class="w-full py-3 rounded-xl font-bold bg-neon-blue text-slate-900 disabled:opacity-50"
+              class="btn-cyber-primary w-full py-3 rounded-xl font-pingfang flex items-center justify-center gap-2 mt-2"
               :disabled="!form.nickname || saving"
               @click="saveManual"
             >
+              <LoaderCircle v-if="saving" class="w-4 h-4 animate-spin" :stroke-width="2.5" />
+              <Save v-else class="w-4 h-4" :stroke-width="2.5" />
               {{ saving ? '保存中…' : '保存修改' }}
             </button>
           </div>
 
           <button
-            class="w-full mt-3 py-2 text-slate-500 hover:text-slate-300 text-xs"
+            class="btn-cyber-ghost w-full mt-4 py-2 rounded-lg font-pingfang text-xs"
             @click="close"
           >
             稍后再说
@@ -146,6 +222,7 @@ import { ref, computed, watch } from 'vue'
 import type { User } from '~/types'
 import { PLAYER_COLORS } from '~/types'
 import { useUser } from '~/composables/useUser'
+import { Sparkles, Settings2, Upload, Check, LoaderCircle, Save } from 'lucide-vue-next'
 
 const props = defineProps<{ show: boolean; user: User | null }>()
 const emit = defineEmits<{
@@ -185,15 +262,18 @@ watch(() => props.user, (u) => {
 }, { immediate: true })
 
 const avatarStyle = computed(() => {
+  if (form.value.avatarUrl) {
+    return { background: `url(${form.value.avatarUrl})` }
+  }
   const key = (form.value.avatarColor || 'fire-red') as keyof typeof COLORS
   const c = COLORS[key] || COLORS['fire-red']
-  return {
-    background: form.value.avatarUrl ? `url(${form.value.avatarUrl})` : c.bg,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    borderColor: c.neon
-  }
+  return { background: c.bg }
 })
+
+function getGlow(colorKey: string | null) {
+  const key = (colorKey || 'fire-red') as keyof typeof COLORS
+  return COLORS[key]?.neon || COLORS['fire-red'].neon
+}
 
 function close() {
   if (saving.value || uploading.value) return
@@ -217,7 +297,6 @@ async function uploadAvatar(file: File) {
   if (!props.user) return
   uploading.value = true
   try {
-    // 压缩
     const imageCompression = (await import('browser-image-compression')).default
     const compressed = await imageCompression(file, {
       maxSizeMB: 0.2,
@@ -225,7 +304,6 @@ async function uploadAvatar(file: File) {
       useWebWorker: true,
       exifOrientation: 1
     })
-    // 上传到 Blob
     const { upload } = await import('@vercel/blob/client')
     const pathname = `avatars/${props.user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
     const blob = await upload(pathname, compressed, {
@@ -287,6 +365,8 @@ async function bindWechat() {
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+.modal-fade-enter-active { transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+.modal-fade-leave-active { transition: all 0.15s ease-in; }
+.modal-fade-enter-from { opacity: 0; transform: translateY(20px) scale(0.96); }
+.modal-fade-leave-to   { opacity: 0; transform: translateY(8px) scale(0.98); }
 </style>

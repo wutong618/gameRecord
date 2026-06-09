@@ -75,7 +75,7 @@ function createServerHead(options = {}) {
 
 const unheadPlugins = [];
 
-const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"},{"charset":"utf-8"},{"name":"theme-color","content":"#0f172a"},{"name":"apple-mobile-web-app-capable","content":"yes"}],"link":[],"style":[],"script":[],"noscript":[],"title":"游戏现场记分器","viewport":"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"};
+const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"},{"charset":"utf-8"},{"name":"theme-color","content":"#050714"},{"name":"apple-mobile-web-app-capable","content":"yes"}],"link":[],"style":[],"script":[],"noscript":[],"title":"游戏现场记分器","viewport":"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"};
 
 const appRootId = "__nuxt";
 
