@@ -276,6 +276,10 @@ async function createRoom() {
       currentUser.value.clientId,
       roomName.value.trim() || undefined
     )
+    // 标记"我刚创建"，RoomView mount 时读这个标记触发"房主宣言"裁决
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('justCreatedRoomId', session.roomId)
+    }
     emit('enter', session.roomId)
   } catch (e: any) {
     alert('创建失败：' + (e?.message || e))

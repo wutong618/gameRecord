@@ -29,6 +29,8 @@ export { injectHead, useHead, useSeoMeta, useHeadSafe, useServerHead, useServerS
 export { ensureTempUser, getUser, updateUser, bindWechat, getRoom, updateRoom, createRoomApi, sitDown, deleteRoom, listRooms, deleteAllRooms, RoomSummary } from '../composables/useDb';
 export { useFeatureAccess, FeatureKey } from '../composables/useFeatureAccess';
 export { usePolling } from '../composables/usePolling';
+export { ROASTS, triggerRoast, triggerRoomCreated, triggerPlayerJoined, dismissRoast, judgeAndTriggerRoast, useRoast, RoastScenario, RoastJudgeInput } from '../composables/useRoast';
 export { useRoom } from '../composables/useRoom';
+export { useTypewriter } from '../composables/useTypewriter';
 export { useUser } from '../composables/useUser';
 export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composables';

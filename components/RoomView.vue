@@ -268,6 +268,9 @@
       @close="showDetail = false"
       @edit="onDetailEdit"
     />
+
+    <!-- 文案裁决系统：记分成功后弹出 -->
+    <RoastModal :round-number="roastRoundNumber" />
   </div>
 </template>
 
@@ -277,6 +280,7 @@ import { useUser } from '~/composables/useUser'
 import { usePolling } from '~/composables/usePolling'
 import { getRoom as fetchRoomApi } from '~/composables/useDb'
 import { useRouter } from 'vue-router'
+import { useRoast, judgeAndTriggerRoast } from '~/composables/useRoast'
 import {
   ArrowLeft, Trash2, BarChart3, LineChart, History, Inbox,
   LoaderCircle, AlertCircle, RefreshCw, Target, MousePointerClick, Sparkles
@@ -310,6 +314,7 @@ const detailIndex = ref(0)
 const isRetrying = ref(false)
 const retryAttempt = ref(0)
 const lastInsertedRound = ref<number | null>(null)
+const roastRoundNumber = ref(0)
 
 const isCurrentUserSeated = computed(() => {
   if (!currentSession.value || !currentUser.value) return false
@@ -352,6 +357,20 @@ onMounted(async () => {
   retryAttempt.value = 0
   if (session && currentUser.value && !isCurrentUserSeated.value) {
     await autoSit()
+  }
+
+  // 房主刚创建完：读 HomeView 写的 sessionStorage 标记，触发"房主宣言"
+  if (typeof window !== 'undefined' && session && currentUser.value) {
+    const justCreated = sessionStorage.getItem('justCreatedRoomId')
+    if (justCreated === props.roomId) {
+      sessionStorage.removeItem('justCreatedRoomId')
+      // 房主 = 第一个坐下的人（seat 0），确认是自己
+      const hostSeat = session.seats[0]
+      if (hostSeat?.user?.id === currentUser.value.id) {
+        // 延迟一点，等 Modal 弹窗/轮询消化完
+        setTimeout(() => triggerRoomCreated(currentUser.value!), 800)
+      }
+    }
   }
 })
 
@@ -413,6 +432,8 @@ async function doSitDown(seatIndex?: number) {
   autoSittingDown.value = true
   try {
     await sitDown(currentSession.value.roomId, currentUser.value.clientId, seatIndex)
+    // 触发"新玩家入局"（只有自己坐下/换座时触发，不为他人的轮询触发）
+    triggerPlayerJoined(currentUser.value)
   } catch (e: any) {
     alert('坐下失败：' + (e?.message || e))
   } finally {
@@ -447,12 +468,43 @@ async function handleScoreSubmit(scores: number[]) {
   if (!currentUser.value) return
   isSaving.value = true
   try {
+    // 记录"本轮前的累计分"用于裁决系统的"暴击"判断
+    const previousTotals = currentSession.value
+      ? [...totalScores.value]
+      : []
+
     if (isEditMode.value) {
       await updateRound(editingRoundIndex.value, scores, currentUser.value)
     } else {
       await addRound(scores, currentUser.value)
     }
     closeModal()
+
+    // 触发裁决系统（记分成功 + 随机）
+    if (currentSession.value) {
+      const players = currentSession.value.seats.map(s => s.user)
+      // 等下一帧让 totalScores 重新计算完
+      await nextTick()
+      const newTotals = [...totalScores.value]
+      // 50% 概率触发；不满足条件也走默认（让每次记分都看到一条）
+      if (Math.random() < 0.6) {
+        const scenario = judgeAndTriggerRoast({
+          players,
+          totalScores: newTotals,
+          roundScores: scores,
+          previousTotals,
+          isFirstRound: previousTotals.length === 0
+        })
+        // judgeAndTriggerRoast 没返回 → fallback 强制选一条
+        if (!scenario) {
+          const fallback = ['king_loser', 'comeback', 'lopsided'][Math.floor(Math.random() * 3)] as any
+          useRoast().triggerRoast(fallback, { first: undefined, last: undefined })
+        }
+        // 标记本轮
+        const lastRound = currentSession.value.gameData.rounds[currentSession.value.gameData.rounds.length - 1]
+        if (lastRound) roastRoundNumber.value = lastRound.roundNumber
+      }
+    }
   } catch (e: any) {
     console.error('[handleScoreSubmit]', e)
     alert('保存失败：' + (e?.statusMessage || e?.data?.statusMessage || e?.message || JSON.stringify(e)))

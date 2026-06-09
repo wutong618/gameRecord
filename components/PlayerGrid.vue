@@ -1,6 +1,6 @@
 <template>
   <div
-    class="grid gap-3"
+    class="grid gap-x-3 gap-y-4"
     :class="gridColsClass"
   >
     <SeatSlot
@@ -38,7 +38,7 @@ const gridColsClass = computed(() => {
   if (n <= 4) return 'grid-cols-4'
   if (n <= 6) return 'grid-cols-3 sm:grid-cols-6'
   if (n <= 8) return 'grid-cols-4 sm:grid-cols-8'
-  return 'grid-cols-5 sm:grid-cols-5'  // 9-10
+  return 'grid-cols-5'
 })
 
 function isSelfSeat(seatIndex: number): boolean {

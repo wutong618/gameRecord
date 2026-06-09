@@ -1,10 +1,10 @@
 {
-  "_D3R2cIpl.js": {
+  "_1UEhTwG9.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "D3R2cIpl.js",
+    "file": "1UEhTwG9.js",
     "name": "vue.-sixQ7xP",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
@@ -309,13 +309,13 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "nSWcFIly.js",
+    "file": "D-iNNxTg.js",
     "name": "error-404",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_D3R2cIpl.js"
+      "_1UEhTwG9.js"
     ],
     "css": [
       "error-404.Dgo7RJym.css"
@@ -332,12 +332,12 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "c-as6KAB.js",
+    "file": "C97Ypxqc.js",
     "name": "error-500",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_D3R2cIpl.js",
+      "_1UEhTwG9.js",
       "node_modules/nuxt/dist/app/entry.js"
     ],
     "css": [
@@ -375,7 +375,7 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "B5GbKE4r.js",
+    "file": "C3vtqq5R.js",
     "name": "entry",
     "src": "node_modules/nuxt/dist/app/entry.js",
     "isEntry": true,
@@ -384,7 +384,7 @@
       "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue"
     ],
     "css": [
-      "entry.WVlbrbJL.css"
+      "entry.Da14JPZ2.css"
     ],
     "assets": [
       "Audiowide-normal-400-latin-ext.DBgo3hnO.woff2",
@@ -408,8 +408,8 @@
       "Russo_One-normal-400-latin.BfOuQF9V.woff2"
     ]
   },
-  "entry.WVlbrbJL.css": {
-    "file": "entry.WVlbrbJL.css",
+  "entry.Da14JPZ2.css": {
+    "file": "entry.Da14JPZ2.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
@@ -514,7 +514,7 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "C9BAdNB4.js",
+    "file": "BA-0Lrac.js",
     "name": "index",
     "src": "pages/index.vue",
     "isDynamicEntry": true,
@@ -526,11 +526,11 @@
       "node_modules/@vercel/blob/dist/client.js"
     ],
     "css": [
-      "index.B3_m-jxW.css"
+      "index.D9A6CI5v.css"
     ]
   },
-  "index.B3_m-jxW.css": {
-    "file": "index.B3_m-jxW.css",
+  "index.D9A6CI5v.css": {
+    "file": "index.D9A6CI5v.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
