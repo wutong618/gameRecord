@@ -124,12 +124,15 @@ export async function deleteRoom(id: string): Promise<void> {
   await $fetch('/api/room', { method: 'DELETE', query: { id } })
 }
 
-// GET /api/rooms —— 列出所有房间
-let listCache: { value: RoomSummary[]; expiresAt: number } | null = null
-export async function listRooms(): Promise<RoomSummary[]> {
-  if (listCache && listCache.expiresAt > Date.now()) return listCache.value
-  const value = await $fetch<RoomSummary[]>('/api/rooms')
-  listCache = { value, expiresAt: Date.now() + 1500 }
+// GET /api/rooms?clientId=xxx —— 列出自己参与过的房间
+let listCache: { value: RoomSummary[]; expiresAt: number; key: string } | null = null
+export async function listRooms(clientId?: string): Promise<RoomSummary[]> {
+  const cacheKey = clientId || 'all'
+  if (listCache && listCache.key === cacheKey && listCache.expiresAt > Date.now()) {
+    return listCache.value
+  }
+  const value = await $fetch<RoomSummary[]>('/api/rooms', { query: clientId ? { clientId } : {} })
+  listCache = { value, expiresAt: Date.now() + 1500, key: cacheKey }
   return value
 }
 

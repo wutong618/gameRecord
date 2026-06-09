@@ -21,36 +21,43 @@
                 {{ isEdit ? `修改 R${roundNumber} 轮分数` : '记录新一轮' }}
               </h3>
               <p class="text-slate-400 text-sm mt-1">
-                输入本轮得分（支持负数）
+                输入本轮得分（输入框可负，"± 切换正负"按钮也可调）
               </p>
             </div>
 
-            <!-- 输入框网格 -->
+            <!-- 输入框网格：按座位顺序渲染（seatIndex 0..N-1） -->
             <div class="grid grid-cols-2 gap-4 mb-6">
               <div
-                v-for="player in players"
-                :key="player.id"
+                v-for="seat in seatedSeats"
+                :key="seat.seatIndex"
                 class="flex flex-col items-center"
               >
                 <div
-                  class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold mb-2"
-                  :style="getAvatarStyle(player.color)"
+                  class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold mb-2 overflow-hidden"
+                  :style="getAvatarStyle(seat.user!.avatarColor)"
                 >
-                  {{ player.name }}
+                  <img
+                    v-if="seat.user!.avatarUrl"
+                    :src="seat.user!.avatarUrl"
+                    class="w-full h-full object-cover"
+                    :alt="seat.user!.nickname"
+                  />
+                  <span v-else>{{ (seat.user!.nickname || '?').slice(0, 1) }}</span>
                 </div>
                 <input
-                  v-model.number="scores[player.id]"
+                  :value="scores[seat.seatIndex] ?? 0"
+                  @input="onScoreInput(seat.seatIndex, $event)"
                   type="number"
                   inputmode="numeric"
                   class="w-full bg-slate-700 text-center text-xl font-bold text-white py-3 px-2 rounded-xl border-2 focus:border-neon-blue outline-none transition-all"
-                  :class="(scores[player.id] ?? 0) >= 0 ? 'border-slate-600 focus:border-neon-green' : 'border-slate-600 focus:border-neon-pink'"
+                  :class="(scores[seat.seatIndex] ?? 0) >= 0 ? 'border-slate-600 focus:border-neon-green' : 'border-slate-600 focus:border-neon-pink'"
                   placeholder="0"
                 />
                 <button
                   type="button"
                   class="mt-1.5 text-xs text-slate-400 hover:text-white px-2 py-0.5 rounded border border-slate-700 hover:border-slate-500 transition-colors"
-                  :class="(scores[player.id] ?? 0) < 0 ? 'text-neon-pink border-neon-pink/40' : ''"
-                  @click="toggleSign(player.id)"
+                  :class="(scores[seat.seatIndex] ?? 0) < 0 ? 'text-neon-pink border-neon-pink/40' : ''"
+                  @click="toggleSign(seat.seatIndex)"
                 >
                   ± 切换正负
                 </button>
@@ -87,12 +94,12 @@
 </template>
 
 <script setup lang="ts">
-import type { PlayerProfile } from '~/types'
+import type { Seat, User } from '~/types'
 import { PLAYER_COLORS } from '~/types'
 
 const props = defineProps<{
   show: boolean
-  players: PlayerProfile[]
+  seats: Seat[]                                    // 整个 seats 数组（含空位也行，按座位渲染）
   isEdit?: boolean
   roundNumber?: number
   initialScores?: number[]
@@ -104,21 +111,34 @@ const emit = defineEmits<{
   (e: 'confirm', scores: number[]): void
 }>()
 
-const scores = ref<number[]>([0, 0, 0, 0])
+// 已坐的 seats（按座位顺序；弹窗渲染这一组）
+const seatedSeats = computed<Seat[]>(() => props.seats.filter((s): s is Seat & { user: User } => !!s.user))
 
-// 监听弹窗显示状态
+const scores = ref<number[]>([])
+
+// 弹窗打开时初始化：长度 = 房间 max_players（保证 scores 数组与 Round.scores 长度一致）
 watch(() => props.show, (newVal) => {
   if (newVal) {
-    if (props.initialScores) {
+    const n = props.seats.length || 2
+    if (props.initialScores && props.initialScores.length === n) {
       scores.value = [...props.initialScores]
     } else {
-      scores.value = [0, 0, 0, 0]
+      scores.value = new Array(n).fill(0)
     }
   }
 })
 
-function getAvatarStyle(color: string) {
-  const colors = PLAYER_COLORS[color as keyof typeof PLAYER_COLORS]
+function onScoreInput(seatIndex: number, e: Event) {
+  const input = e.target as HTMLInputElement
+  const v = input.value === '' ? 0 : Number(input.value)
+  if (Number.isFinite(v)) {
+    scores.value[seatIndex] = v
+  }
+}
+
+function getAvatarStyle(colorKey: string | null) {
+  const key = (colorKey || 'fire-red') as keyof typeof PLAYER_COLORS
+  const colors = PLAYER_COLORS[key] || PLAYER_COLORS['fire-red']
   return {
     background: colors.bg,
     border: `2px solid ${colors.neon}`,
@@ -131,9 +151,9 @@ function close() {
   emit('close')
 }
 
-function toggleSign(playerId: number) {
-  const cur = scores.value[playerId] ?? 0
-  scores.value[playerId] = -cur
+function toggleSign(seatIndex: number) {
+  if (seatIndex < 0 || seatIndex >= scores.value.length) return
+  scores.value[seatIndex] = -(scores.value[seatIndex] ?? 0)
 }
 
 function confirm() {

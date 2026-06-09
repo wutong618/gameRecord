@@ -1,10 +1,10 @@
 const client_manifest = {
-  "_C43JtmZ6.js": {
+  "_UEH8bk9Q.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "C43JtmZ6.js",
+    "file": "UEH8bk9Q.js",
     "name": "vue.-sixQ7xP",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
@@ -15,13 +15,13 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "V6VuR3s4.js",
+    "file": "C1wW__YX.js",
     "name": "error-404",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_C43JtmZ6.js"
+      "_UEH8bk9Q.js"
     ],
     "css": [
       "error-404.Dgo7RJym.css"
@@ -38,12 +38,12 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "B8TintEv.js",
+    "file": "DgGh5Uzx.js",
     "name": "error-500",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_C43JtmZ6.js",
+      "_UEH8bk9Q.js",
       "node_modules/nuxt/dist/app/entry.js"
     ],
     "css": [
@@ -81,7 +81,7 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "qr1T4TwS.js",
+    "file": "BXTu42Vk.js",
     "name": "entry",
     "src": "node_modules/nuxt/dist/app/entry.js",
     "isEntry": true,
@@ -90,11 +90,11 @@ const client_manifest = {
       "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue"
     ],
     "css": [
-      "entry.CcSK0AyX.css"
+      "entry.Cdwf0yc5.css"
     ]
   },
-  "entry.CcSK0AyX.css": {
-    "file": "entry.CcSK0AyX.css",
+  "entry.Cdwf0yc5.css": {
+    "file": "entry.Cdwf0yc5.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
@@ -104,7 +104,7 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "D1luc6ek.js",
+    "file": "C1Qz2rQi.js",
     "name": "index",
     "src": "pages/index.vue",
     "isDynamicEntry": true,
@@ -116,11 +116,11 @@ const client_manifest = {
       "node_modules/@vercel/blob/dist/client.js"
     ],
     "css": [
-      "index.IljMsjHP.css"
+      "index.BIeAip5B.css"
     ]
   },
-  "index.IljMsjHP.css": {
-    "file": "index.IljMsjHP.css",
+  "index.BIeAip5B.css": {
+    "file": "index.BIeAip5B.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true

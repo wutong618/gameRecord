@@ -345,7 +345,7 @@ export async function deleteAllRooms(): Promise<number> {
   return result.rowCount ?? 0
 }
 
-// 列出所有房间摘要
+// 列出所有房间摘要（可选 clientId：只返回该 user 参与过的房间）
 export interface RoomSummary {
   roomId: string
   name: string | null
@@ -356,24 +356,56 @@ export interface RoomSummary {
   lastActivityAt: number
 }
 
-export async function listRooms(): Promise<RoomSummary[]> {
-  const KEY = 'rooms:list'
+export async function listRooms(clientId?: string): Promise<RoomSummary[]> {
+  // cache key 包含 clientId，避免不同用户拿错
+  const KEY = clientId ? `rooms:list:${clientId}` : 'rooms:list:all'
   const cached = cacheGet<RoomSummary[]>(KEY)
   if (cached) return cached
   await initDb()
-  const sessRows = await sql<{
-    room_id: string
-    name: string | null
-    created_at: string | number
-    max_players: number
-    game_data: GameData | string
-  }>`SELECT room_id, name, created_at, max_players, game_data FROM game_sessions`
-  // 已占座位数
+
+  // 解析 userId（如果给了 clientId）
+  let userId: number | null = null
+  if (clientId) {
+    const u = await sql<{ id: number }>`SELECT id FROM users WHERE client_id = ${clientId} LIMIT 1`
+    if (!u.rows[0]) {
+      // clientId 给了但 user 不存在（无效 clientId）→ 返回空
+      cacheSet(KEY, [], 2000)
+      return []
+    }
+    userId = u.rows[0].id
+  }
+
+  // 用 sql.query() 动态拼接：tagged template 不能嵌套
+  const sessRows = userId
+    ? await sql.query<{
+        room_id: string
+        name: string | null
+        created_at: string | number
+        max_players: number
+        game_data: GameData | string
+      }>(
+        `SELECT gs.room_id, gs.name, gs.created_at, gs.max_players, gs.game_data
+         FROM game_sessions gs
+         WHERE EXISTS (
+           SELECT 1 FROM session_players sp
+           WHERE sp.room_id = gs.room_id AND sp.user_id = $1
+         )`,
+        [userId]
+      )
+    : await sql<{
+        room_id: string
+        name: string | null
+        created_at: string | number
+        max_players: number
+        game_data: GameData | string
+      }>`SELECT room_id, name, created_at, max_players, game_data FROM game_sessions`
+
   const countRows = await sql<{ room_id: string; seated: number }>`
     SELECT room_id, COUNT(*)::int AS seated
     FROM session_players GROUP BY room_id
   `
   const seatMap = new Map(countRows.rows.map(r => [r.room_id, r.seated]))
+
   const list: RoomSummary[] = sessRows.rows.map(r => {
     const gd = typeof r.game_data === 'string' ? JSON.parse(r.game_data) : r.game_data
     const createdAt = typeof r.created_at === 'string' ? Number(r.created_at) : r.created_at

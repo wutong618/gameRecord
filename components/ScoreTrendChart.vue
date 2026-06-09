@@ -6,16 +6,17 @@
 
 <script setup lang="ts">
 import { Line } from 'vue-chartjs'
-import type { PlayerProfile, Round } from '~/types'
+import type { User, Round } from '~/types'
 import { PLAYER_COLORS } from '~/types'
 
 const props = defineProps<{
-  players: PlayerProfile[]
+  players: User[]
   rounds: Round[]
 }>()
 
-function getColor(key: string) {
-  return PLAYER_COLORS[key as keyof typeof PLAYER_COLORS]?.neon || '#fff'
+function getColor(key: string | null) {
+  const k = (key || 'fire-red') as keyof typeof PLAYER_COLORS
+  return PLAYER_COLORS[k]?.neon || '#fff'
 }
 
 const chartData = computed(() => {
@@ -24,7 +25,7 @@ const chartData = computed(() => {
   // 累计分数：按 players 顺序
   const cumulative: number[][] = props.players.map(() => [0])
   for (const round of props.rounds) {
-    props.players.forEach((p, i) => {
+    props.players.forEach((_p, i) => {
       const last = cumulative[i][cumulative[i].length - 1] ?? 0
       cumulative[i].push(last + (round.scores[i] ?? 0))
     })
@@ -33,9 +34,9 @@ const chartData = computed(() => {
   return {
     labels,
     datasets: props.players.map((p, i) => {
-      const c = getColor(p.color)
+      const c = getColor(p.avatarColor)
       return {
-        label: p.name,
+        label: p.nickname || '?',
         data: cumulative[i],
         borderColor: c,
         backgroundColor: c + '30',

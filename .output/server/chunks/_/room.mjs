@@ -392,12 +392,29 @@ async function deleteAllRooms() {
   cacheInvalidate("room:");
   return (_a = result.rowCount) != null ? _a : 0;
 }
-async function listRooms() {
-  const KEY = "rooms:list";
+async function listRooms(clientId) {
+  const KEY = clientId ? `rooms:list:${clientId}` : "rooms:list:all";
   const cached = cacheGet(KEY);
   if (cached) return cached;
   await initDb();
-  const sessRows = await sql`SELECT room_id, name, created_at, max_players, game_data FROM game_sessions`;
+  let userId = null;
+  if (clientId) {
+    const u = await sql`SELECT id FROM users WHERE client_id = ${clientId} LIMIT 1`;
+    if (!u.rows[0]) {
+      cacheSet(KEY, [], 2e3);
+      return [];
+    }
+    userId = u.rows[0].id;
+  }
+  const sessRows = userId ? await sql.query(
+    `SELECT gs.room_id, gs.name, gs.created_at, gs.max_players, gs.game_data
+         FROM game_sessions gs
+         WHERE EXISTS (
+           SELECT 1 FROM session_players sp
+           WHERE sp.room_id = gs.room_id AND sp.user_id = $1
+         )`,
+    [userId]
+  ) : await sql`SELECT room_id, name, created_at, max_players, game_data FROM game_sessions`;
   const countRows = await sql`
     SELECT room_id, COUNT(*)::int AS seated
     FROM session_players GROUP BY room_id

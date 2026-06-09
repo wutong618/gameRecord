@@ -152,6 +152,7 @@
 
 <script setup lang="ts">
 import { listRooms as fetchRooms, deleteAllRooms, type RoomSummary } from '~/composables/useDb'
+// 注：fetchRooms(clientId) 接受 clientId 参数（v3.0 仅显示自己参与的房间）
 import { useUser } from '~/composables/useUser'
 import { PLAYER_COLORS } from '~/types'
 
@@ -177,9 +178,10 @@ onMounted(async () => {
 })
 
 async function loadList() {
+  if (!currentUser.value) return
   loadingList.value = true
   try {
-    rooms.value = await fetchRooms()
+    rooms.value = await fetchRooms(currentUser.value.clientId)
   } catch (e) {
     console.error('加载房间列表失败', e)
   } finally {

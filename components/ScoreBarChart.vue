@@ -6,21 +6,27 @@
 
 <script setup lang="ts">
 import { Bar } from 'vue-chartjs'
-import type { PlayerProfile } from '~/types'
+import type { User } from '~/types'
 import { PLAYER_COLORS } from '~/types'
 
 const props = defineProps<{
-  players: PlayerProfile[]
+  players: User[]
   totalScores: number[]
 }>()
 
 const chartData = computed(() => ({
-  labels: props.players.map(p => p.name),
+  labels: props.players.map(p => p.nickname || '?'),
   datasets: [{
     label: '总分',
     data: props.totalScores,
-    backgroundColor: props.players.map(p => PLAYER_COLORS[p.color as keyof typeof PLAYER_COLORS].neon + '80'),
-    borderColor: props.players.map(p => PLAYER_COLORS[p.color as keyof typeof PLAYER_COLORS].neon),
+    backgroundColor: props.players.map(p => {
+      const c = PLAYER_COLORS[(p.avatarColor || 'fire-red') as keyof typeof PLAYER_COLORS]
+      return c ? c.neon + '80' : '#ffffff80'
+    }),
+    borderColor: props.players.map(p => {
+      const c = PLAYER_COLORS[(p.avatarColor || 'fire-red') as keyof typeof PLAYER_COLORS]
+      return c ? c.neon : '#ffffff'
+    }),
     borderWidth: 2,
     borderRadius: 8,
     barThickness: 40
@@ -45,7 +51,7 @@ const chartOptions = {
   scales: {
     x: {
       grid: { display: false },
-      ticks: { color: '#f8fafc', font: { size: 16, weight: 'bold' as const } }
+      ticks: { color: '#f8fafc', font: { size: 14, weight: 'bold' as const } }
     },
     y: {
       grid: { color: '#334155' },

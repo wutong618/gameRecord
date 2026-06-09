@@ -87,6 +87,7 @@
           :players="seatedPlayers"
           @edit="openEditModal"
           @delete="confirmDeleteRound"
+          @detail="openDetail"
         />
       </div>
 
@@ -98,13 +99,21 @@
 
     <!-- 加载/失败状态 -->
     <div v-if="!currentSession" class="px-4 pt-8">
-      <div v-if="isLoading" class="text-center py-16 text-slate-400">
+      <!-- 加载中：单次拉取 或 重试中（4 次重试期间） -->
+      <div
+        v-if="isLoading || isRetrying"
+        class="text-center py-16 text-slate-400"
+      >
         <svg class="w-10 h-10 mx-auto mb-3 animate-spin text-neon-blue" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
         </svg>
-        <p class="font-bold">加载房间中…</p>
+        <p class="font-bold">正在进入房间…</p>
+        <p v-if="isRetrying" class="text-xs text-slate-500 mt-1">
+          首次连接可能稍慢（5-10s），重试中 {{ retryAttempt }}/4
+        </p>
       </div>
+      <!-- 真正失败：4 次都失败 -->
       <div v-else class="bg-slate-800/70 rounded-2xl p-6 border border-neon-pink/30 text-center">
         <div class="text-3xl mb-2">⚠️</div>
         <p class="text-white font-bold mb-1">加载失败</p>
@@ -148,11 +157,11 @@
       </div>
     </div>
 
-    <!-- 录入弹窗 -->
+    <!-- 录入弹窗：传 seats（含 seatIndex）让弹窗按座位顺序渲染 -->
     <ScoreInputModal
       v-if="currentSession"
       :show="showModal"
-      :players="seatedPlayers"
+      :seats="currentSession.seats"
       :is-edit="isEditMode"
       :round-number="editingRoundNumber"
       :initial-scores="editingScores"
@@ -182,6 +191,17 @@
       :user="currentUser"
       @close="showProfile = false"
       @saved="onProfileSaved"
+    />
+
+    <!-- 轮次详情 -->
+    <RoundDetailModal
+      v-if="detailRound"
+      :show="showDetail"
+      :round="detailRound"
+      :round-index="detailIndex"
+      :users-by-seat="usersBySeat"
+      @close="showDetail = false"
+      @edit="onDetailEdit"
     />
   </div>
 </template>
@@ -216,6 +236,10 @@ const roundToDelete = ref<number | null>(null)
 const askDeleteRoom = ref(false)
 const autoSittingDown = ref(false)
 const showProfile = ref(false)
+const showDetail = ref(false)
+const detailIndex = ref(0)
+const isRetrying = ref(false)   // onMounted 4 次重试阶段
+const retryAttempt = ref(0)     // 当前重试次数（1-4）
 
 const isCurrentUserSeated = computed(() => {
   if (!currentSession.value || !currentUser.value) return false
@@ -232,13 +256,21 @@ const seatedPlayers = computed(() => {
 
 onMounted(async () => {
   await initUser()
-  // 主动重试：刚加入的链接可能 server 端刚 init 还没缓存，多试几次避免 8s 轮询期间的失败页
+  // 主动重试 4 次：刚加入的链接可能 server 端 cold start 慢，多试几次避免中间闪"加载失败"
+  // 关键：重试期间一直显示"加载中"——仅当 4 次都失败且经过缓冲延迟后才显示"加载失败"
+  isRetrying.value = true
+  loadError.value = null
   let session = null
   for (let i = 0; i < 4; i++) {
+    retryAttempt.value = i + 1
     session = await loadRoom(props.roomId)
     if (session) break
-    await new Promise(r => setTimeout(r, 800 * (i + 1)))  // 800ms, 1.6s, 2.4s
+    await new Promise(r => setTimeout(r, 500 * Math.pow(1.6, i)))  // 500/800/1280/2050ms
   }
+  // 哪怕重试用 0ms 完成、4 次都失败，也强制保持"加载中"至少 1.5s，避免闪"加载失败"页
+  await new Promise(r => setTimeout(r, 1500))
+  isRetrying.value = false
+  retryAttempt.value = 0
   if (session && currentUser.value && !isCurrentUserSeated.value) {
     await autoSit()
   }
@@ -285,6 +317,27 @@ function onProfileSaved(updated: User) {
   }
 }
 
+// 轮次详情：正向索引（不是倒序）
+const detailRound = computed(() => {
+  if (!currentSession.value) return null
+  return currentSession.value.gameData.rounds[detailIndex.value] ?? null
+})
+// usersBySeat：按 seatIndex 顺序的用户列表（含空位 null）—— 给详情 Modal 用
+const usersBySeat = computed<(User | null)[]>(() => {
+  if (!currentSession.value) return []
+  return currentSession.value.seats.map(s => s.user)
+})
+
+function openDetail(index: number) {
+  detailIndex.value = index
+  showDetail.value = true
+}
+
+function onDetailEdit(index: number) {
+  showDetail.value = false
+  openEditModal(index)
+}
+
 async function autoSit() {
   if (autoSittingDown.value || !currentUser.value || !currentSession.value) return
   await doSitDown(undefined)
@@ -329,12 +382,21 @@ function openEditModal(index: number) {
 function closeModal() { showModal.value = false }
 async function handleScoreSubmit(scores: number[]) {
   if (!currentUser.value) return
-  if (isEditMode.value) {
-    await updateRound(editingRoundIndex.value, scores, currentUser.value)
-  } else {
-    await addRound(scores, currentUser.value)
+  isSaving.value = true
+  try {
+    if (isEditMode.value) {
+      await updateRound(editingRoundIndex.value, scores, currentUser.value)
+    } else {
+      await addRound(scores, currentUser.value)
+    }
+    closeModal()
+  } catch (e: any) {
+    console.error('[handleScoreSubmit]', e)
+    alert('保存失败：' + (e?.statusMessage || e?.data?.statusMessage || e?.message || JSON.stringify(e)))
+    // 不关弹窗，让用户能修改后再试
+  } finally {
+    isSaving.value = false
   }
-  closeModal()
 }
 
 // 删除单轮
