@@ -232,9 +232,14 @@ const seatedPlayers = computed(() => {
 
 onMounted(async () => {
   await initUser()
-  await loadRoom(props.roomId)
-  // 自动坐下（如果当前用户没在座位上）
-  if (currentSession.value && currentUser.value && !isCurrentUserSeated.value) {
+  // 主动重试：刚加入的链接可能 server 端刚 init 还没缓存，多试几次避免 8s 轮询期间的失败页
+  let session = null
+  for (let i = 0; i < 4; i++) {
+    session = await loadRoom(props.roomId)
+    if (session) break
+    await new Promise(r => setTimeout(r, 800 * (i + 1)))  // 800ms, 1.6s, 2.4s
+  }
+  if (session && currentUser.value && !isCurrentUserSeated.value) {
     await autoSit()
   }
 })
@@ -269,7 +274,15 @@ async function onSeatClick({ seatIndex, user, isSelf }: { seatIndex: number; use
 
 function onProfileSaved(updated: User) {
   currentUser.value = updated
-  // session 也会通过轮询刷新
+  // 同步更新 currentSession.seats 里的自己，避免等 8s 轮询
+  if (currentSession.value) {
+    currentSession.value = {
+      ...currentSession.value,
+      seats: currentSession.value.seats.map(s =>
+        s.user?.id === updated.id ? { ...s, user: updated } : s
+      )
+    }
+  }
 }
 
 async function autoSit() {
@@ -289,10 +302,12 @@ async function doSitDown(seatIndex?: number) {
   }
 }
 
-// 录入
-function openAddModal() {
+// 录入：实时拉一次 session，避免轮询延迟导致误判未坐满
+async function openAddModal() {
+  // 先拉一次最新 session
+  const fresh = await fetchRoomApi(props.roomId)
+  if (fresh) currentSession.value = fresh
   if (!currentSession.value) return
-  // 必须坐满才能开新局
   const seated = currentSession.value.seats.filter(s => s.user).length
   const max = currentSession.value.maxPlayers
   if (seated < max) {
