@@ -222,11 +222,11 @@
       </div>
     </div>
 
-    <!-- 录入弹窗 -->
+    <!-- 录入弹窗：v-if="modalReady" 让 Modal 永久挂载（首次 mount 后 DOM 一直存在），避免每次打开都重建 -->
     <ScoreInputModal
-      v-if="currentSession"
+      v-if="modalReady"
       :show="showModal"
-      :seats="currentSession.seats"
+      :seats="currentSession?.seats ?? []"
       :is-edit="isEditMode"
       :round-number="editingRoundNumber"
       :initial-scores="editingScores"
@@ -315,6 +315,7 @@ const isRetrying = ref(false)
 const retryAttempt = ref(0)
 const lastInsertedRound = ref<number | null>(null)
 const roastRoundNumber = ref(0)
+const modalReady = ref(false)   // ScoreInputModal 永久挂载标志
 
 const isCurrentUserSeated = computed(() => {
   if (!currentSession.value || !currentUser.value) return false
@@ -355,6 +356,8 @@ onMounted(async () => {
   await new Promise(r => setTimeout(r, 1500))
   isRetrying.value = false
   retryAttempt.value = 0
+  // 拿到首个 session 后立即永久挂载 ScoreInputModal（避免首次打开 mount 延迟）
+  if (session) modalReady.value = true
   if (session && currentUser.value && !isCurrentUserSeated.value) {
     await autoSit()
   }
@@ -441,9 +444,8 @@ async function doSitDown(seatIndex?: number) {
   }
 }
 
-async function openAddModal() {
-  const fresh = await fetchRoomApi(props.roomId)
-  if (fresh) currentSession.value = fresh
+function openAddModal() {
+  // 乐观打开：本地 snapshot 直接判断坐满（轮询 8s 已经在跑，数据新鲜）
   if (!currentSession.value) return
   const seated = currentSession.value.seats.filter(s => s.user).length
   const max = currentSession.value.maxPlayers
@@ -455,6 +457,10 @@ async function openAddModal() {
   editingScores.value = []
   editingRoundIndex.value = 0
   showModal.value = true
+  // 后台异步拉一次最新 session 兜底（不阻塞 UI；通常轮询数据已是最新）
+  fetchRoomApi(props.roomId).then((fresh) => {
+    if (fresh) currentSession.value = fresh
+  })
 }
 function openEditModal(index: number) {
   isEditMode.value = true

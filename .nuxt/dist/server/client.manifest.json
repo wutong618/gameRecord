@@ -1,10 +1,10 @@
 {
-  "_CHNxA8Jw.js": {
+  "_DNFZ6aAz.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CHNxA8Jw.js",
+    "file": "DNFZ6aAz.js",
     "name": "vue.-sixQ7xP",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
@@ -309,13 +309,13 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "D2F2XBgK.js",
+    "file": "DmTzMRe6.js",
     "name": "error-404",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_CHNxA8Jw.js"
+      "_DNFZ6aAz.js"
     ],
     "css": [
       "error-404.Dgo7RJym.css"
@@ -332,12 +332,12 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "t1MBaRK6.js",
+    "file": "mnTYD1ZU.js",
     "name": "error-500",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_CHNxA8Jw.js",
+      "_DNFZ6aAz.js",
       "node_modules/nuxt/dist/app/entry.js"
     ],
     "css": [
@@ -375,7 +375,7 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "BkHrOtG7.js",
+    "file": "D49ftcRi.js",
     "name": "entry",
     "src": "node_modules/nuxt/dist/app/entry.js",
     "isEntry": true,
@@ -514,7 +514,7 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "DZJYsfKZ.js",
+    "file": "BBEaAq15.js",
     "name": "index",
     "src": "pages/index.vue",
     "isDynamicEntry": true,
@@ -526,11 +526,11 @@
       "node_modules/@vercel/blob/dist/client.js"
     ],
     "css": [
-      "index.D9A6CI5v.css"
+      "index.B9ArZrlj.css"
     ]
   },
-  "index.D9A6CI5v.css": {
-    "file": "index.D9A6CI5v.css",
+  "index.B9ArZrlj.css": {
+    "file": "index.B9ArZrlj.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
