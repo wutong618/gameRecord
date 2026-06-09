@@ -1,5 +1,5 @@
 import { d as defineEventHandler, g as getQuery, c as createError } from '../../nitro/nitro.mjs';
-import { d as deleteRoom } from '../../_/room.mjs';
+import { deleteRoom } from '../../_/room.mjs';
 import 'node:http';
 import 'node:https';
 import 'node:events';
@@ -8,6 +8,7 @@ import 'node:fs';
 import 'node:path';
 import 'node:crypto';
 import 'node:url';
+import '../../_/postgres.mjs';
 import '@vercel/postgres';
 
 const room_delete = defineEventHandler(async (event) => {

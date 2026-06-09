@@ -5,24 +5,55 @@
       <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-neon-green via-neon-blue to-neon-pink">
         游戏记分器
       </h1>
-      <p class="text-slate-400 text-sm mt-1">把链接发给朋友，4 人实时同步</p>
+      <p class="text-slate-400 text-sm mt-1">把链接发给朋友，2-10 人实时同步</p>
     </header>
 
     <main class="p-4 max-w-md mx-auto space-y-6">
-      <!-- 创建新局 -->
-      <button
-        class="w-full py-5 rounded-2xl font-black text-lg bg-gradient-to-br from-neon-green to-emerald-500 text-slate-900 shadow-lg shadow-neon-green/20 active:scale-95 transition-all flex items-center justify-center gap-2"
-        :disabled="creating"
-        :class="{ 'opacity-70 cursor-not-allowed': creating }"
-        @click="createRoom"
-      >
-        <svg v-if="creating" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor"
-            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-        </svg>
-        <span>{{ creating ? '正在创建...' : '🎮 开启新局' }}</span>
-      </button>
+      <!-- 当前用户提示 -->
+      <div v-if="currentUser" class="bg-slate-800/60 rounded-xl p-3 border border-slate-700 flex items-center gap-3">
+        <div
+          class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
+          :style="getAvatarStyle(currentUser.avatarColor)"
+        >
+          <img v-if="currentUser.avatarUrl" :src="currentUser.avatarUrl" class="w-full h-full object-cover rounded-full" />
+          <span v-else>{{ currentUser.nickname.slice(0, 1) }}</span>
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="text-white text-sm font-bold truncate">{{ currentUser.nickname }}</div>
+          <div class="text-[10px] text-slate-500">
+            {{ currentUser.isTemporary ? '临时身份' : '已绑定' }} · id #{{ currentUser.id }}
+          </div>
+        </div>
+      </div>
+
+      <!-- 房间名称输入 -->
+      <div>
+        <input
+          v-model="roomName"
+          type="text"
+          maxlength="30"
+          placeholder="给房间起个名字（可选）"
+          class="w-full bg-slate-800 text-white text-center text-sm py-2.5 rounded-xl border border-slate-700 focus:border-neon-blue outline-none"
+        />
+      </div>
+
+      <!-- 人数选择 + 创建 -->
+      <div class="space-y-3">
+        <PlayerCountPicker v-model="maxPlayers" />
+        <button
+          class="w-full py-4 rounded-2xl font-black text-base bg-gradient-to-br from-neon-green to-emerald-500 text-slate-900 shadow-lg shadow-neon-green/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+          :disabled="creating"
+          :class="{ 'opacity-70 cursor-not-allowed': creating }"
+          @click="createRoom"
+        >
+          <svg v-if="creating" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+          </svg>
+          <span>{{ creating ? '正在创建...' : '🎮 开启新局' }}</span>
+        </button>
+      </div>
 
       <!-- 输入已有 room 链接 / ID -->
       <div class="space-y-2">
@@ -73,12 +104,11 @@
           >
             <div class="flex items-center justify-between gap-2">
               <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="font-mono text-sm text-white truncate">{{ r.roomId }}</span>
-                  <span class="text-xs text-slate-500 shrink-0">{{ r.roundsCount }} 轮</span>
+                <div class="text-sm text-white font-bold truncate mb-1">
+                  {{ r.name || '未命名房间' }}
                 </div>
                 <div class="text-[11px] text-slate-500">
-                  {{ formatRelative(r.lastActivityAt) }}
+                  {{ formatTime(r.createdAt) }} · {{ r.seatedCount }}/{{ r.maxPlayers }}人 · {{ r.roundsCount }}轮
                 </div>
               </div>
               <button
@@ -94,7 +124,7 @@
 
       <div class="text-center text-slate-500 text-[11px] leading-relaxed">
         <p>创建后把链接发到微信群</p>
-        <p>4 个人分别打开就能一起记分</p>
+        <p>2-10 人坐下后即可开始记分</p>
       </div>
 
       <!-- 清空所有（危险操作，放在底部） -->
@@ -121,21 +151,28 @@
 </template>
 
 <script setup lang="ts">
-import { generateRoomId } from '~/composables/useGame'
 import { listRooms as fetchRooms, deleteAllRooms, type RoomSummary } from '~/composables/useDb'
+import { useUser } from '~/composables/useUser'
+import { PLAYER_COLORS } from '~/types'
 
 const emit = defineEmits<{
   (e: 'enter', roomId: string): void
 }>()
 
+const { currentUser, init: initUser } = useUser()
+
 const inputRoom = ref('')
+const roomName = ref('')
+const maxPlayers = ref(4)
 const creating = ref(false)
 const loadingList = ref(false)
 const clearing = ref(false)
 const askClearAll = ref(false)
 const rooms = ref<RoomSummary[]>([])
 
-onMounted(() => {
+onMounted(async () => {
+  // 先初始化 user（确保 clientId 生成并注册到 server）
+  await initUser()
   loadList()
 })
 
@@ -150,16 +187,10 @@ async function loadList() {
   }
 }
 
-function formatRelative(ts: number): string {
-  const diff = Date.now() - ts
-  const min = Math.floor(diff / 60_000)
-  if (min < 1) return '刚刚'
-  if (min < 60) return `${min} 分钟前`
-  const hr = Math.floor(min / 60)
-  if (hr < 24) return `${hr} 小时前`
-  const day = Math.floor(hr / 24)
-  if (day < 30) return `${day} 天前`
-  return new Date(ts).toLocaleDateString('zh-CN')
+function formatTime(ts: number): string {
+  const d = new Date(ts)
+  const pad = (n: number) => n.toString().padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
 function extractId(raw: string): string {
@@ -175,11 +206,22 @@ function extractId(raw: string): string {
   return s
 }
 
-function createRoom() {
-  if (creating.value) return
+async function createRoom() {
+  if (creating.value || !currentUser.value) return
   creating.value = true
-  const id = generateRoomId()
-  emit('enter', id)
+  try {
+    const { createRoomApi } = await import('~/composables/useDb')
+    const session = await createRoomApi(
+      maxPlayers.value,
+      currentUser.value.clientId,
+      roomName.value.trim() || undefined
+    )
+    emit('enter', session.roomId)
+  } catch (e: any) {
+    alert('创建失败：' + (e?.message || e))
+  } finally {
+    creating.value = false
+  }
 }
 
 function joinInput() {
@@ -212,6 +254,15 @@ async function executeClearAll() {
   } finally {
     clearing.value = false
     askClearAll.value = false
+  }
+}
+
+function getAvatarStyle(colorKey?: string | null) {
+  const key = (colorKey || 'fire-red') as keyof typeof PLAYER_COLORS
+  const c = PLAYER_COLORS[key] || PLAYER_COLORS['fire-red']
+  return {
+    background: c.bg,
+    boxShadow: `0 0 8px ${c.neon}50`
   }
 }
 </script>

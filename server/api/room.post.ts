@@ -1,8 +1,8 @@
 import { updateRoomGameData } from '~/server/utils/room'
 import type { GameData } from '~/types'
 
-// POST /api/room?id=xxx
-// 接收 { gameData: { rounds: [...] } }，整体覆盖写入
+// POST /api/room?id=xxx —— v3.0：覆盖 gameData
+// v3.0 新增校验：每轮 scores 长度必须等于该房间 max_players
 export default defineEventHandler(async (event) => {
   const id = getQuery(event).id
   if (typeof id !== 'string' || !id.trim()) {

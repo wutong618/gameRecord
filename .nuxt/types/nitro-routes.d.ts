@@ -11,9 +11,24 @@ declare module "nitropack/types" {
     '/api/rooms': {
       'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/rooms.delete').default>>>>
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/rooms.get').default>>>>
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/rooms.post').default>>>>
     }
-    '/api/upload-avatar': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/upload-avatar').default>>>>
+    '/api/rooms/:id/seat': {
+      'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/rooms/[id]/seat.delete').default>>>>
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/rooms/[id]/seat.post').default>>>>
+    }
+    '/api/users/bind-wechat': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/bind-wechat.post').default>>>>
+    }
+    '/api/users/me': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/me.get').default>>>>
+      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/me.put').default>>>>
+    }
+    '/api/users/me/avatar': {
+      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/me/avatar').default>>>>
+    }
+    '/api/users/temp': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/temp.post').default>>>>
     }
     '/__nuxt_error': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/nuxt/dist/core/runtime/nitro/renderer').default>>>>

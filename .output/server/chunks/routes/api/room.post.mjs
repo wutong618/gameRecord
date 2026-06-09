@@ -1,5 +1,5 @@
 import { d as defineEventHandler, g as getQuery, c as createError, r as readBody } from '../../nitro/nitro.mjs';
-import { u as updateRoomGameData } from '../../_/room.mjs';
+import { updateRoomGameData } from '../../_/room.mjs';
 import 'node:http';
 import 'node:https';
 import 'node:events';
@@ -8,6 +8,7 @@ import 'node:fs';
 import 'node:path';
 import 'node:crypto';
 import 'node:url';
+import '../../_/postgres.mjs';
 import '@vercel/postgres';
 
 const room_post = defineEventHandler(async (event) => {

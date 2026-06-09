@@ -8,22 +8,22 @@ declare global {
   const appendResponseHeader: typeof import('../../node_modules/h3').appendResponseHeader
   const appendResponseHeaders: typeof import('../../node_modules/h3').appendResponseHeaders
   const assertMethod: typeof import('../../node_modules/h3').assertMethod
+  const bindWechat: typeof import('../../server/utils/room').bindWechat
   const cacheGet: typeof import('../../server/utils/cache').cacheGet
   const cacheInvalidate: typeof import('../../server/utils/cache').cacheInvalidate
   const cacheInvalidateAll: typeof import('../../server/utils/cache').cacheInvalidateAll
   const cacheSet: typeof import('../../server/utils/cache').cacheSet
   const cachedEventHandler: typeof import('../../node_modules/nitropack/dist/runtime/internal/cache').cachedEventHandler
   const cachedFunction: typeof import('../../node_modules/nitropack/dist/runtime/internal/cache').cachedFunction
-  const calcTotalScores: typeof import('../../server/utils/room').calcTotalScores
   const callNodeListener: typeof import('../../node_modules/h3').callNodeListener
   const clearResponseHeaders: typeof import('../../node_modules/h3').clearResponseHeaders
   const clearSession: typeof import('../../node_modules/h3').clearSession
   const createApp: typeof import('../../node_modules/h3').createApp
   const createAppEventHandler: typeof import('../../node_modules/h3').createAppEventHandler
-  const createEmptyRoom: typeof import('../../server/utils/room').createEmptyRoom
   const createError: typeof import('../../node_modules/h3').createError
   const createEvent: typeof import('../../node_modules/h3').createEvent
   const createEventStream: typeof import('../../node_modules/h3').createEventStream
+  const createRoomWithCreator: typeof import('../../server/utils/room').createRoomWithCreator
   const createRouter: typeof import('../../node_modules/h3').createRouter
   const defaultContentType: typeof import('../../node_modules/h3').defaultContentType
   const defineAppConfig: typeof import('../../node_modules/nuxt/dist/core/runtime/nitro/config').defineAppConfig
@@ -51,12 +51,11 @@ declare global {
   const fromNodeMiddleware: typeof import('../../node_modules/h3').fromNodeMiddleware
   const fromPlainHandler: typeof import('../../node_modules/h3').fromPlainHandler
   const fromWebHandler: typeof import('../../node_modules/h3').fromWebHandler
-  const getAllPlayers: typeof import('../../server/utils/room').getAllPlayers
   const getCookie: typeof import('../../node_modules/h3').getCookie
   const getHeader: typeof import('../../node_modules/h3').getHeader
   const getHeaders: typeof import('../../node_modules/h3').getHeaders
   const getMethod: typeof import('../../node_modules/h3').getMethod
-  const getPlayer: typeof import('../../server/utils/room').getPlayer
+  const getOrCreateTempUser: typeof import('../../server/utils/room').getOrCreateTempUser
   const getProxyRequestHeaders: typeof import('../../node_modules/h3').getProxyRequestHeaders
   const getQuery: typeof import('../../node_modules/h3').getQuery
   const getRequestFingerprint: typeof import('../../node_modules/h3').getRequestFingerprint
@@ -72,11 +71,12 @@ declare global {
   const getResponseHeaders: typeof import('../../node_modules/h3').getResponseHeaders
   const getResponseStatus: typeof import('../../node_modules/h3').getResponseStatus
   const getResponseStatusText: typeof import('../../node_modules/h3').getResponseStatusText
-  const getRoom: typeof import('../../server/utils/room').getRoom
+  const getRoomWithSeats: typeof import('../../server/utils/room').getRoomWithSeats
   const getRouteRules: typeof import('../../node_modules/nitropack/dist/runtime/internal/route-rules').getRouteRules
   const getRouterParam: typeof import('../../node_modules/h3').getRouterParam
   const getRouterParams: typeof import('../../node_modules/h3').getRouterParams
   const getSession: typeof import('../../node_modules/h3').getSession
+  const getUserById: typeof import('../../server/utils/room').getUserById
   const getValidatedQuery: typeof import('../../node_modules/h3').getValidatedQuery
   const getValidatedRouterParams: typeof import('../../node_modules/h3').getValidatedRouterParams
   const handleCacheHeaders: typeof import('../../node_modules/h3').handleCacheHeaders
@@ -92,6 +92,7 @@ declare global {
   const isStream: typeof import('../../node_modules/h3').isStream
   const isWebResponse: typeof import('../../node_modules/h3').isWebResponse
   const lazyEventHandler: typeof import('../../node_modules/h3').lazyEventHandler
+  const leaveSeat: typeof import('../../server/utils/room').leaveSeat
   const listRooms: typeof import('../../server/utils/room').listRooms
   const nitroPlugin: typeof import('../../node_modules/nitropack/dist/runtime/internal/plugin').nitroPlugin
   const parseCookies: typeof import('../../node_modules/h3').parseCookies
@@ -103,10 +104,12 @@ declare global {
   const readRawBody: typeof import('../../node_modules/h3').readRawBody
   const readValidatedBody: typeof import('../../node_modules/h3').readValidatedBody
   const removeResponseHeader: typeof import('../../node_modules/h3').removeResponseHeader
+  const rowToUser: typeof import('../../server/utils/mappers').rowToUser
   const runTask: typeof import('../../node_modules/nitropack/dist/runtime/internal/task').runTask
   const sanitizeStatusCode: typeof import('../../node_modules/h3').sanitizeStatusCode
   const sanitizeStatusMessage: typeof import('../../node_modules/h3').sanitizeStatusMessage
   const sealSession: typeof import('../../node_modules/h3').sealSession
+  const seatPlayer: typeof import('../../server/utils/room').seatPlayer
   const send: typeof import('../../node_modules/h3').send
   const sendError: typeof import('../../node_modules/h3').sendError
   const sendIterable: typeof import('../../node_modules/h3').sendIterable
@@ -119,7 +122,6 @@ declare global {
   const setCookie: typeof import('../../node_modules/h3').setCookie
   const setHeader: typeof import('../../node_modules/h3').setHeader
   const setHeaders: typeof import('../../node_modules/h3').setHeaders
-  const setPlayerAvatar: typeof import('../../server/utils/room').setPlayerAvatar
   const setResponseHeader: typeof import('../../node_modules/h3').setResponseHeader
   const setResponseHeaders: typeof import('../../node_modules/h3').setResponseHeaders
   const setResponseStatus: typeof import('../../node_modules/h3').setResponseStatus
@@ -133,6 +135,7 @@ declare global {
   const unsealSession: typeof import('../../node_modules/h3').unsealSession
   const updateRoomGameData: typeof import('../../server/utils/room').updateRoomGameData
   const updateSession: typeof import('../../node_modules/h3').updateSession
+  const updateUser: typeof import('../../server/utils/room').updateUser
   const useAppConfig: typeof import('../../node_modules/nitropack/dist/runtime/internal/config').useAppConfig
   const useBase: typeof import('../../node_modules/h3').useBase
   const useEvent: typeof import('../../node_modules/nitropack/dist/runtime/internal/context').useEvent
@@ -144,6 +147,9 @@ declare global {
 }
 // for type re-export
 declare global {
+  // @ts-ignore
+  export type { UserRow } from '../../server/utils/mappers'
+  import('../../server/utils/mappers')
   // @ts-ignore
   export type { VercelPoolClient, Row, Field } from '../../server/utils/postgres'
   import('../../server/utils/postgres')
@@ -167,5 +173,6 @@ export { buildAssetsURL as __buildAssetsURL, publicAssetsURL as __publicAssetsUR
 export { defineAppConfig } from '/Users/dukkha/gameRecord/node_modules/nuxt/dist/core/runtime/nitro/config';
 export { cacheGet, cacheSet, cacheInvalidate, cacheInvalidateAll } from '/Users/dukkha/gameRecord/server/utils/cache';
 export { initDb } from '/Users/dukkha/gameRecord/server/utils/init-db';
+export { rowToUser } from '/Users/dukkha/gameRecord/server/utils/mappers';
 export { sql } from '/Users/dukkha/gameRecord/server/utils/postgres';
-export { invalidateRoomCache, getAllPlayers, getPlayer, setPlayerAvatar, getRoom, createEmptyRoom, updateRoomGameData, deleteRoom, deleteAllRooms, listRooms, calcTotalScores } from '/Users/dukkha/gameRecord/server/utils/room';
+export { invalidateRoomCache, getOrCreateTempUser, getUserById, updateUser, bindWechat, getRoomWithSeats, createRoomWithCreator, seatPlayer, leaveSeat, updateRoomGameData, deleteRoom, deleteAllRooms, listRooms } from '/Users/dukkha/gameRecord/server/utils/room';
