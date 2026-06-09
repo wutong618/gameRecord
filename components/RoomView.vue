@@ -349,13 +349,12 @@ onMounted(async () => {
   if (!session || session.roomId !== props.roomId) {
     isRetrying.value = true
     loadError.value = null
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       retryAttempt.value = i + 1
       session = await loadRoom(props.roomId)
       if (session) break
       await new Promise(r => setTimeout(r, 500 * Math.pow(1.6, i)))
     }
-    await new Promise(r => setTimeout(r, 1500))
     isRetrying.value = false
     retryAttempt.value = 0
   }

@@ -132,7 +132,7 @@ export async function listRooms(clientId?: string): Promise<RoomSummary[]> {
     return listCache.value
   }
   const value = await $fetch<RoomSummary[]>('/api/rooms', { query: clientId ? { clientId } : {} })
-  listCache = { value, expiresAt: Date.now() + 1500, key: cacheKey }
+  listCache = { value, expiresAt: Date.now() + 5000, key: cacheKey }
   return value
 }
 

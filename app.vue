@@ -1,3 +1,8 @@
+<script setup lang="ts">
+// 全局 keep-alive：每 60s ping 一次 /api/health，避免 Vercel serverless 函数"冻"
+const { isActive: keepAliveActive, lastPingAt } = useKeepAlive(60_000)
+</script>
+
 <template>
   <div class="antialiased relative min-h-screen overflow-x-hidden" style="background: var(--cyber-bg);">
     <!-- 顶部固定扫描光带（esports 直播感） -->

@@ -194,7 +194,7 @@ export async function getRoomWithSeats(roomId: string): Promise<GameSession | nu
     gameData,
     seats
   }
-  cacheSet(ROOM_CACHE_KEY(roomId), session, 5000)
+  cacheSet(ROOM_CACHE_KEY(roomId), session, 10000)
   return session
 }
 
@@ -382,7 +382,7 @@ export async function listRooms(clientId?: string): Promise<RoomSummary[]> {
     const u = await sql<{ id: number }>`SELECT id FROM users WHERE client_id = ${clientId} LIMIT 1`
     if (!u.rows[0]) {
       // clientId 给了但 user 不存在（无效 clientId）→ 返回空
-      cacheSet(KEY, [], 2000)
+      cacheSet(KEY, [], 5000)
       return []
     }
     userId = u.rows[0].id
@@ -434,6 +434,6 @@ export async function listRooms(clientId?: string): Promise<RoomSummary[]> {
     }
   })
   list.sort((a, b) => b.lastActivityAt - a.lastActivityAt)
-  cacheSet(KEY, list, 2000)
+  cacheSet(KEY, list, 5000)
   return list
 }

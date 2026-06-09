@@ -28,6 +28,7 @@ export { withCtx, withDirectives, withKeys, withMemo, withModifiers, withScopeId
 export { injectHead, useHead, useSeoMeta, useHeadSafe, useServerHead, useServerSeoMeta, useServerHeadSafe } from '@unhead/vue';
 export { ensureTempUser, getUser, updateUser, bindWechat, getRoom, updateRoom, createRoomApi, sitDown, deleteRoom, listRooms, deleteAllRooms, RoomSummary } from '../composables/useDb';
 export { useFeatureAccess, FeatureKey } from '../composables/useFeatureAccess';
+export { useKeepAlive } from '../composables/useKeepAlive';
 export { usePolling } from '../composables/usePolling';
 export { ROASTS, triggerRoast, triggerRoomCreated, triggerPlayerJoined, dismissRoast, judgeAndTriggerRoast, useRoast, RoastScenario, RoastJudgeInput } from '../composables/useRoast';
 export { useRoom } from '../composables/useRoom';

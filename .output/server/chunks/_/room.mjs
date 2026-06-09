@@ -275,7 +275,7 @@ async function getRoomWithSeats(roomId) {
     gameData,
     seats
   };
-  cacheSet(ROOM_CACHE_KEY(roomId), session, 5e3);
+  cacheSet(ROOM_CACHE_KEY(roomId), session, 1e4);
   return session;
 }
 async function createRoomWithCreator(roomId, maxPlayers, creatorUserId, name) {
@@ -413,7 +413,7 @@ async function listRooms(clientId) {
   if (clientId) {
     const u = await sql`SELECT id FROM users WHERE client_id = ${clientId} LIMIT 1`;
     if (!u.rows[0]) {
-      cacheSet(KEY, [], 2e3);
+      cacheSet(KEY, [], 5e3);
       return [];
     }
     userId = u.rows[0].id;
@@ -448,7 +448,7 @@ async function listRooms(clientId) {
     };
   });
   list.sort((a, b) => b.lastActivityAt - a.lastActivityAt);
-  cacheSet(KEY, list, 2e3);
+  cacheSet(KEY, list, 5e3);
   return list;
 }
 
