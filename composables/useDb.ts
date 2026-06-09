@@ -136,9 +136,12 @@ export async function listRooms(clientId?: string): Promise<RoomSummary[]> {
   return value
 }
 
-// DELETE /api/rooms —— 清空所有房间
-export async function deleteAllRooms(): Promise<{ deleted: number }> {
-  const res = await $fetch<{ success: boolean; deleted: number }>('/api/rooms', { method: 'DELETE' })
+// DELETE /api/rooms?clientId=xxx —— 清空该 user 参与过的房间（v3.0 多租户安全）
+export async function deleteAllRooms(clientId: string): Promise<{ deleted: number }> {
+  const res = await $fetch<{ success: boolean; deleted: number }>('/api/rooms', {
+    method: 'DELETE',
+    query: { clientId }
+  })
   inflightGet.clear()
   inflightExpiry.clear()
   listCache = null

@@ -386,10 +386,22 @@ async function deleteRoom(roomId) {
   invalidateRoomCache(roomId);
   return ((_a = result.rowCount) != null ? _a : 0) > 0;
 }
-async function deleteAllRooms() {
+async function deleteAllRooms(clientId) {
   var _a;
-  const result = await sql`DELETE FROM game_sessions`;
+  let result;
+  if (clientId) {
+    const userRow = await sql`SELECT id FROM users WHERE client_id = ${clientId} LIMIT 1`;
+    if (!userRow.rows[0]) return 0;
+    const uid = userRow.rows[0].id;
+    result = await sql`
+      DELETE FROM game_sessions
+      WHERE room_id IN (SELECT room_id FROM session_players WHERE user_id = ${uid})
+    `;
+  } else {
+    result = await sql`DELETE FROM game_sessions`;
+  }
   cacheInvalidate("room:");
+  cacheInvalidate("rooms:list");
   return (_a = result.rowCount) != null ? _a : 0;
 }
 async function listRooms(clientId) {

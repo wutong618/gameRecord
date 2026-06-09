@@ -127,14 +127,14 @@
         <p>2-10 人坐下后即可开始记分</p>
       </div>
 
-      <!-- 清空所有（危险操作，放在底部） -->
+      <!-- 清空我的房间（只删自己参与过的） -->
       <div v-if="rooms.length > 0" class="pt-4 border-t border-slate-800">
         <button
           class="w-full py-2 rounded-xl text-xs text-slate-500 hover:text-neon-pink border border-slate-800 hover:border-neon-pink/40 transition-all"
           :disabled="clearing"
           @click="askClearAll = true"
         >
-          🗑 清空所有房间
+          🗑 清空我的房间
         </button>
       </div>
     </main>
@@ -142,8 +142,8 @@
     <!-- 清空确认 -->
     <ConfirmDialog
       :show="askClearAll"
-      title="清空所有房间？"
-      :message="`将永久删除 ${rooms.length} 个房间及其所有分数，无法恢复。`"
+      title="清空我的房间？"
+      :message="`将永久删除您参与过的 ${rooms.length} 个房间及其所有分数，无法恢复。`"
       @cancel="askClearAll = false"
       @confirm="executeClearAll"
     />
@@ -246,10 +246,10 @@ async function copyLink(roomId: string) {
 }
 
 async function executeClearAll() {
-  if (clearing.value) return
+  if (clearing.value || !currentUser.value) return
   clearing.value = true
   try {
-    await deleteAllRooms()
+    await deleteAllRooms(currentUser.value.clientId)
     rooms.value = []
   } catch (e: any) {
     alert('清空失败：' + (e?.message || e))

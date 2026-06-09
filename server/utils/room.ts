@@ -338,10 +338,23 @@ export async function deleteRoom(roomId: string): Promise<boolean> {
   return (result.rowCount ?? 0) > 0
 }
 
-// 清空所有房间
-export async function deleteAllRooms(): Promise<number> {
-  const result = await sql`DELETE FROM game_sessions`
+// 清空指定用户参与过的房间（clientId 为空时删全部——admin/调试用）
+export async function deleteAllRooms(clientId?: string): Promise<number> {
+  let result
+  if (clientId) {
+    // 找该 user 坐过的所有 room_id，再删
+    const userRow = await sql<{ id: number }>`SELECT id FROM users WHERE client_id = ${clientId} LIMIT 1`
+    if (!userRow.rows[0]) return 0
+    const uid = userRow.rows[0].id
+    result = await sql`
+      DELETE FROM game_sessions
+      WHERE room_id IN (SELECT room_id FROM session_players WHERE user_id = ${uid})
+    `
+  } else {
+    result = await sql`DELETE FROM game_sessions`
+  }
   cacheInvalidate('room:')
+  cacheInvalidate('rooms:list')  // 也清掉 listRooms 缓存
   return result.rowCount ?? 0
 }
 
