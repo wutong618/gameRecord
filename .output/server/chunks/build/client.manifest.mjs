@@ -1,10 +1,10 @@
 const client_manifest = {
-  "_DNFZ6aAz.js": {
+  "_AERjn242.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "DNFZ6aAz.js",
+    "file": "AERjn242.js",
     "name": "vue.-sixQ7xP",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
@@ -309,13 +309,13 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "DmTzMRe6.js",
+    "file": "CvFJHNDy.js",
     "name": "error-404",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_DNFZ6aAz.js"
+      "_AERjn242.js"
     ],
     "css": [
       "error-404.Dgo7RJym.css"
@@ -332,12 +332,12 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "mnTYD1ZU.js",
+    "file": "RBSP4rn3.js",
     "name": "error-500",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_DNFZ6aAz.js",
+      "_AERjn242.js",
       "node_modules/nuxt/dist/app/entry.js"
     ],
     "css": [
@@ -375,7 +375,7 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "D49ftcRi.js",
+    "file": "B3i9Baa1.js",
     "name": "entry",
     "src": "node_modules/nuxt/dist/app/entry.js",
     "isEntry": true,
@@ -514,7 +514,7 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "BBEaAq15.js",
+    "file": "Ds8Sc1ZT.js",
     "name": "index",
     "src": "pages/index.vue",
     "isDynamicEntry": true,
@@ -526,11 +526,11 @@ const client_manifest = {
       "node_modules/@vercel/blob/dist/client.js"
     ],
     "css": [
-      "index.B9ArZrlj.css"
+      "index.BuPxfCn5.css"
     ]
   },
-  "index.B9ArZrlj.css": {
-    "file": "index.B9ArZrlj.css",
+  "index.BuPxfCn5.css": {
+    "file": "index.BuPxfCn5.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true

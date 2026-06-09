@@ -39,7 +39,7 @@ export function useRoom() {
     return res.seat
   }
 
-  // 添加一轮（server 会写入 recordedBy/recordedAt）
+  // 添加一轮（乐观更新：本地立即用 next 数据，不再等 loadRoom 网络）
   const addRound = async (scores: number[], recorder: User) => {
     if (!currentSession.value) return
     isSaving.value = true
@@ -54,13 +54,16 @@ export function useRoom() {
         }
       ]
       await db.updateRoom(currentSession.value.roomId, { rounds: next })
-      await loadRoom(currentSession.value.roomId)
+      // 乐观更新：立即把 currentSession 替换为含 next 的版本
+      currentSession.value = { ...currentSession.value, gameData: { rounds: next } }
+      // 后台 fire-and-forget 拉一次最新（同步别人加的轮次，UI 不阻塞）
+      loadRoom(currentSession.value.roomId)
     } finally {
       isSaving.value = false
     }
   }
 
-  // 修改一轮
+  // 修改一轮（乐观更新）
   const updateRound = async (roundIndex: number, newScores: number[], editor: User) => {
     if (!currentSession.value) return
     isSaving.value = true
@@ -71,13 +74,14 @@ export function useRoom() {
           : r
       )
       await db.updateRoom(currentSession.value.roomId, { rounds })
-      await loadRoom(currentSession.value.roomId)
+      currentSession.value = { ...currentSession.value, gameData: { rounds } }
+      loadRoom(currentSession.value.roomId)
     } finally {
       isSaving.value = false
     }
   }
 
-  // 删除一轮
+  // 删除一轮（乐观更新）
   const deleteRound = async (roundIndex: number) => {
     if (!currentSession.value) return
     isSaving.value = true
@@ -86,7 +90,8 @@ export function useRoom() {
         .filter((_, i) => i !== roundIndex)
         .map((r, i) => ({ ...r, roundNumber: i + 1 }))
       await db.updateRoom(currentSession.value.roomId, { rounds })
-      await loadRoom(currentSession.value.roomId)
+      currentSession.value = { ...currentSession.value, gameData: { rounds } }
+      loadRoom(currentSession.value.roomId)
     } finally {
       isSaving.value = false
     }

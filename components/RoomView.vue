@@ -344,19 +344,22 @@ watch(() => currentSession.value?.gameData.rounds.length, (newLen, oldLen) => {
 
 onMounted(async () => {
   await initUser()
-  isRetrying.value = true
-  loadError.value = null
-  let session = null
-  for (let i = 0; i < 4; i++) {
-    retryAttempt.value = i + 1
-    session = await loadRoom(props.roomId)
-    if (session) break
-    await new Promise(r => setTimeout(r, 500 * Math.pow(1.6, i)))
+  // 优先使用 useRoom 已有 session（createRoom 后立即 setCurrentSession，跳过网络重试）
+  let session = currentSession.value
+  if (!session || session.roomId !== props.roomId) {
+    isRetrying.value = true
+    loadError.value = null
+    for (let i = 0; i < 4; i++) {
+      retryAttempt.value = i + 1
+      session = await loadRoom(props.roomId)
+      if (session) break
+      await new Promise(r => setTimeout(r, 500 * Math.pow(1.6, i)))
+    }
+    await new Promise(r => setTimeout(r, 1500))
+    isRetrying.value = false
+    retryAttempt.value = 0
   }
-  await new Promise(r => setTimeout(r, 1500))
-  isRetrying.value = false
-  retryAttempt.value = 0
-  // 拿到首个 session 后立即永久挂载 ScoreInputModal（避免首次打开 mount 延迟）
+  // 拿到 session 后立即永久挂载 ScoreInputModal
   if (session) modalReady.value = true
   if (session && currentUser.value && !isCurrentUserSeated.value) {
     await autoSit()

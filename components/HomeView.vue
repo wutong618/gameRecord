@@ -270,8 +270,10 @@ async function createRoom() {
   if (creating.value || !currentUser.value) return
   creating.value = true
   try {
-    const { createRoomApi } = await import('~/composables/useDb')
-    const session = await createRoomApi(
+    // 走 useRoom.createRoom：返回 session 同时自动 setCurrentSession
+    // → RoomView mount 时 currentSession 已有值，跳过第一次重试
+    const { useRoom } = await import('~/composables/useRoom')
+    const session = await useRoom().createRoom(
       maxPlayers.value,
       currentUser.value.clientId,
       roomName.value.trim() || undefined
