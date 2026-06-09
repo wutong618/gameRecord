@@ -279,6 +279,7 @@ import { defineAsyncComponent } from 'vue'
 import { useRoom } from '~/composables/useRoom'
 import { useUser } from '~/composables/useUser'
 import { usePolling } from '~/composables/usePolling'
+import { useAnalytics } from '~/composables/useAnalytics'
 import { getRoom as fetchRoomApi } from '~/composables/useDb'
 import { useRouter } from 'vue-router'
 import { useRoast, judgeAndTriggerRoast } from '~/composables/useRoast'
@@ -303,6 +304,7 @@ const props = defineProps<{ roomId: string }>()
 defineEmits<{ (e: 'leave'): void }>()
 
 const { currentUser, init: initUser } = useUser()
+const analytics = useAnalytics()
 const router = useRouter()
 const {
   currentSession, isLoading, isSaving, loadError,
@@ -449,6 +451,8 @@ async function doSitDown(seatIndex?: number) {
   autoSittingDown.value = true
   try {
     await sitDown(currentSession.value.roomId, currentUser.value.clientId, seatIndex)
+    // v6.0 埋点：成功坐下，记录是否匿名
+    analytics.joinRoomSuccess(currentUser.value.isTemporary)
     // 触发"新玩家入局"（只有自己坐下/换座时触发，不为他人的轮询触发）
     triggerPlayerJoined(currentUser.value)
   } catch (e: any) {
@@ -498,6 +502,8 @@ async function handleScoreSubmit(scores: number[]) {
     } else {
       await addRound(scores, currentUser.value)
     }
+    // v6.0 埋点：成功记录或修改一轮
+    analytics.submitScoreRound()
     closeModal()
 
     // 触发裁决系统（记分成功 + 随机）

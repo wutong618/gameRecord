@@ -213,6 +213,7 @@
 <script setup lang="ts">
 import { listRooms as fetchRooms, deleteAllRooms, type RoomSummary } from '~/composables/useDb'
 import { useUser } from '~/composables/useUser'
+import { useAnalytics } from '~/composables/useAnalytics'
 import { PLAYER_COLORS } from '~/types'
 import { Trophy, LogIn, History, RefreshCw, Inbox, Link2, Trash2 } from 'lucide-vue-next'
 
@@ -221,6 +222,7 @@ const emit = defineEmits<{
 }>()
 
 const { currentUser, init: initUser } = useUser()
+const analytics = useAnalytics()
 
 const inputRoom = ref('')
 const roomName = ref('')
@@ -303,6 +305,8 @@ async function createRoom() {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('justCreatedRoomId', session.roomId)
     }
+    // v6.0 埋点：成功创建房间
+    analytics.createRoom(maxPlayers.value)
     emit('enter', session.roomId)
   } catch (e: any) {
     alert('创建失败：' + (e?.message || e))

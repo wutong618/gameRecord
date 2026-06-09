@@ -3,31 +3,43 @@ const client_manifest = {
     "resourceType": "style",
     "prefetch": true,
     "preload": true,
-    "file": "index.DBoDkEDO.css",
+    "file": "index.C3EZ0Zu4.css",
     "src": "_!~{002}~.js"
   },
-  "_8uhQ1PFm.js": {
+  "_B850Wwn6.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "8uhQ1PFm.js",
-    "name": "x",
+    "file": "B850Wwn6.js",
+    "name": "vue.-sixQ7xP",
     "imports": [
-      "_CLWPfFhL.js"
+      "node_modules/nuxt/dist/app/entry.js"
     ]
   },
-  "_CLWPfFhL.js": {
+  "_BKZ-MzD9.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CLWPfFhL.js",
+    "file": "BKZ-MzD9.js",
+    "name": "x",
+    "imports": [
+      "_CJ2wMFQ5.js"
+    ]
+  },
+  "_CJ2wMFQ5.js": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "CJ2wMFQ5.js",
     "name": "index",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_DlAUqK2U.js"
+      "_DlAUqK2U.js",
+      "node_modules/@vercel/analytics/dist/index.mjs"
     ],
     "dynamicImports": [
       "components/ScoreInputModal.vue",
@@ -36,25 +48,14 @@ const client_manifest = {
       "components/RoastModal.vue"
     ],
     "css": [
-      "index.DBoDkEDO.css"
+      "index.C3EZ0Zu4.css"
     ]
   },
-  "index.DBoDkEDO.css": {
-    "file": "index.DBoDkEDO.css",
+  "index.C3EZ0Zu4.css": {
+    "file": "index.C3EZ0Zu4.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
-  },
-  "_CaD_7UIa.js": {
-    "resourceType": "script",
-    "module": true,
-    "prefetch": true,
-    "preload": true,
-    "file": "CaD_7UIa.js",
-    "name": "vue.-sixQ7xP",
-    "imports": [
-      "node_modules/nuxt/dist/app/entry.js"
-    ]
   },
   "_DlAUqK2U.js": {
     "resourceType": "script",
@@ -69,14 +70,15 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "C8u2BN7y.js",
+    "file": "L6dhW70_.js",
     "name": "ProfileModal",
     "src": "components/ProfileModal.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_CLWPfFhL.js",
-      "_DlAUqK2U.js"
+      "_CJ2wMFQ5.js",
+      "_DlAUqK2U.js",
+      "node_modules/@vercel/analytics/dist/index.mjs"
     ],
     "dynamicImports": [
       "node_modules/browser-image-compression/dist/browser-image-compression.mjs",
@@ -97,15 +99,16 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "a5l_y0r6.js",
+    "file": "DYoD1I9s.js",
     "name": "RoastModal",
     "src": "components/RoastModal.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_CLWPfFhL.js",
-      "_8uhQ1PFm.js",
-      "_DlAUqK2U.js"
+      "_CJ2wMFQ5.js",
+      "_BKZ-MzD9.js",
+      "_DlAUqK2U.js",
+      "node_modules/@vercel/analytics/dist/index.mjs"
     ],
     "css": [
       "RoastModal.BIURdBI7.css"
@@ -122,15 +125,16 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "BXdVWXVH.js",
+    "file": "J0XD8JVT.js",
     "name": "RoundDetailModal",
     "src": "components/RoundDetailModal.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_CLWPfFhL.js",
-      "_8uhQ1PFm.js",
-      "_DlAUqK2U.js"
+      "_CJ2wMFQ5.js",
+      "_BKZ-MzD9.js",
+      "_DlAUqK2U.js",
+      "node_modules/@vercel/analytics/dist/index.mjs"
     ],
     "css": [
       "RoundDetailModal.CnVzVpGJ.css"
@@ -147,14 +151,15 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "DOK5MJNf.js",
+    "file": "Ba0H68wT.js",
     "name": "ScoreInputModal",
     "src": "components/ScoreInputModal.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_CLWPfFhL.js",
-      "_DlAUqK2U.js"
+      "_CJ2wMFQ5.js",
+      "_DlAUqK2U.js",
+      "node_modules/@vercel/analytics/dist/index.mjs"
     ],
     "css": [
       "ScoreInputModal.CJFcvaH4.css"
@@ -351,13 +356,13 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CI-EX62H.js",
+    "file": "kwj--AH7.js",
     "name": "error-404",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_CaD_7UIa.js",
+      "_B850Wwn6.js",
       "_DlAUqK2U.js"
     ],
     "css": [
@@ -375,12 +380,12 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "iHyT6-UF.js",
+    "file": "D2nZthp5.js",
     "name": "error-500",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_CaD_7UIa.js",
+      "_B850Wwn6.js",
       "_DlAUqK2U.js",
       "node_modules/nuxt/dist/app/entry.js"
     ],
@@ -394,6 +399,16 @@ const client_manifest = {
     "prefetch": true,
     "preload": true
   },
+  "node_modules/@vercel/analytics/dist/index.mjs": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "VWd189iL.js",
+    "name": "index",
+    "src": "node_modules/@vercel/analytics/dist/index.mjs",
+    "isDynamicEntry": true
+  },
   "node_modules/@vercel/blob/dist/client.js": {
     "resourceType": "script",
     "module": true,
@@ -402,6 +417,16 @@ const client_manifest = {
     "file": "DcGO2iTg.js",
     "name": "client",
     "src": "node_modules/@vercel/blob/dist/client.js",
+    "isDynamicEntry": true
+  },
+  "node_modules/@vercel/speed-insights/dist/index.mjs": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "DQx_QkiK.js",
+    "name": "index",
+    "src": "node_modules/@vercel/speed-insights/dist/index.mjs",
     "isDynamicEntry": true
   },
   "node_modules/browser-image-compression/dist/browser-image-compression.mjs": {
@@ -419,17 +444,19 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "B_RL79W8.js",
+    "file": "WpY-Fr8d.js",
     "name": "entry",
     "src": "node_modules/nuxt/dist/app/entry.js",
     "isEntry": true,
     "dynamicImports": [
-      "_CLWPfFhL.js",
+      "_CJ2wMFQ5.js",
+      "node_modules/@vercel/analytics/dist/index.mjs",
+      "node_modules/@vercel/speed-insights/dist/index.mjs",
       "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue",
       "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue"
     ],
     "css": [
-      "entry.CT4jfsBe.css"
+      "entry.Bp0pBfNN.css"
     ],
     "assets": [
       "JetBrains_Mono-normal-400-cyrillic.Buze_B52.woff2",
@@ -448,8 +475,8 @@ const client_manifest = {
       "Russo_One-normal-400-latin.BfOuQF9V.woff2"
     ]
   },
-  "entry.CT4jfsBe.css": {
-    "file": "entry.CT4jfsBe.css",
+  "entry.Bp0pBfNN.css": {
+    "file": "entry.Bp0pBfNN.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true

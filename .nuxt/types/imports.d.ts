@@ -113,6 +113,7 @@ declare global {
   const updateAppConfig: typeof import('../../node_modules/nuxt/dist/app/config')['updateAppConfig']
   const updateRoom: typeof import('../../composables/useDb')['updateRoom']
   const updateUser: typeof import('../../composables/useDb')['updateUser']
+  const useAnalytics: typeof import('../../composables/useAnalytics')['useAnalytics']
   const useAppConfig: typeof import('../../node_modules/nuxt/dist/app/config')['useAppConfig']
   const useAsyncData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useAsyncData']
   const useAttrs: typeof import('../../node_modules/vue')['useAttrs']
@@ -172,6 +173,9 @@ declare global {
   // @ts-ignore
   export type { Component, ComponentPublicInstance, ComputedRef, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode } from '../../node_modules/vue'
   import('../../node_modules/vue')
+  // @ts-ignore
+  export type { AnalyticsEventPayload, AnalyticsEvent } from '../../composables/useAnalytics'
+  import('../../composables/useAnalytics')
   // @ts-ignore
   export type { RoomSummary } from '../../composables/useDb'
   import('../../composables/useDb')
@@ -298,6 +302,7 @@ declare module 'vue' {
     readonly updateAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['updateAppConfig']>
     readonly updateRoom: UnwrapRef<typeof import('../../composables/useDb')['updateRoom']>
     readonly updateUser: UnwrapRef<typeof import('../../composables/useDb')['updateUser']>
+    readonly useAnalytics: UnwrapRef<typeof import('../../composables/useAnalytics')['useAnalytics']>
     readonly useAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['useAppConfig']>
     readonly useAsyncData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useAsyncData']>
     readonly useAttrs: UnwrapRef<typeof import('../../node_modules/vue')['useAttrs']>
