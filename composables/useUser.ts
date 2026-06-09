@@ -35,26 +35,29 @@ function persistUser(u: User | null) {
 }
 
 export function useUser() {
-  // 初始化：挂载时同步调一次 /api/users/temp
-  const init = async (): Promise<User | null> => {
+  // 初始化：v3.1 优化——同步从 localStorage 读缓存立刻填 currentUser，
+  // 后台异步调 /api/users/temp 拿最新 user 覆盖。
+  // 这样首屏 HomeView 立即能渲染 user 卡片（即使是 cache 数据），
+  // 不必等跨太平洋 HTTP 完成。
+  const init = (): User | null => {
     if (isReady.value) return currentUser.value
     const clientId = getOrCreateClientId()
-    // 优先用缓存（避免首屏空白）
+    // 1) 同步读缓存填 currentUser
     const cached = loadCachedUser()
     if (cached && cached.clientId === clientId) {
       currentUser.value = cached
     }
-    try {
-      const user = await db.ensureTempUser(clientId)
-      currentUser.value = user
-      persistUser(user)
-      return user
-    } catch (e) {
-      console.error('[useUser] init failed:', e)
-      return currentUser.value
-    } finally {
-      isReady.value = true
-    }
+    isReady.value = true
+    // 2) 后台异步 ensure（拿最新 user_id / isTemporary 状态）
+    db.ensureTempUser(clientId)
+      .then((user) => {
+        currentUser.value = user
+        persistUser(user)
+      })
+      .catch((e) => {
+        console.error('[useUser] init failed:', e)
+      })
+    return currentUser.value
   }
 
   // 刷新当前 user（轮询时使用）

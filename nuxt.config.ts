@@ -8,14 +8,18 @@ export default defineNuxtConfig({
   ],
   googleFonts: {
     families: {
-      // 主体（中文 + UI）：保留 Noto Sans SC + JetBrains Mono（等宽数字不抖）
-      'Noto Sans SC': [400, 500, 700, 900],
-      'JetBrains Mono': [400, 500, 700],
-      // 标题：复古电子 + 赛博几何
-      Audiowide: [400],
-      Orbitron: [400, 500, 600, 700, 800, 900],
-      Bungee: [400],
-      // 数字强调（分数、轮次号）：力量感等宽
+      // v3.1 字体瘦身：去掉未使用的 weight 和未引用的 family
+      // 实际代码审计：
+      //   - font-medium (500) / font-semibold (600) / font-extrabold (800) 0 处使用
+      //   - font-bold (700) / font-black (900) / 默认 (400) 是真实需求
+      //   - Audiowide / Bungee 0 处 class 引用（只在 tailwind.config.js 字体栈 fallback）
+      // 主体（中文 + UI）：Noto Sans SC（去 500 档）
+      'Noto Sans SC': [400, 700, 900],
+      // 等宽数字 / 时间戳
+      'JetBrains Mono': [400, 700],
+      // 副标题/标签/按钮：Orbitron
+      'Orbitron': [400, 700],
+      // 数字强调（分数、轮次号）：Russo One
       'Russo One': [400]
     },
     display: 'swap',

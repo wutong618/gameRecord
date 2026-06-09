@@ -1,7 +1,14 @@
 import { sql } from './postgres.mjs';
 import '@vercel/postgres';
 
-async function initDb() {
+let dbReady = null;
+function ensureDb() {
+  if (!dbReady) {
+    dbReady = runDdl();
+  }
+  return dbReady;
+}
+async function runDdl() {
   await sql`DROP TABLE IF EXISTS players CASCADE`;
   await sql`
     CREATE TABLE IF NOT EXISTS users (
@@ -177,7 +184,7 @@ function rowToUser(r) {
   };
 }
 async function getOrCreateTempUser(clientId) {
-  await initDb();
+  await ensureDb();
   const found = await sql`SELECT * FROM users WHERE client_id = ${clientId} LIMIT 1`;
   if (found.rows[0]) return rowToUser(found.rows[0]);
   const nickname = randomNickname();
@@ -233,45 +240,56 @@ async function bindWechat(clientId, openid, nickname, avatarUrl) {
   );
   return rows[0] ? rowToUser(rows[0]) : null;
 }
-async function getRoomSeats(roomId) {
-  var _a, _b, _c;
-  const session = await sql`
-    SELECT max_players FROM game_sessions WHERE room_id = ${roomId} LIMIT 1
-  `;
-  const max = (_b = (_a = session.rows[0]) == null ? void 0 : _a.max_players) != null ? _b : 4;
-  const occupied = await sql`
-    SELECT sp.seat_index, u.* FROM session_players sp
-    JOIN users u ON u.id = sp.user_id
-    WHERE sp.room_id = ${roomId}
-    ORDER BY sp.seat_index ASC
-  `;
-  const m2 = /* @__PURE__ */ new Map();
-  for (const r of occupied.rows) {
-    m2.set(r.seat_index, rowToUser(r));
-  }
-  const seats = [];
-  for (let i = 0; i < max; i++) {
-    seats.push({ seatIndex: i, user: (_c = m2.get(i)) != null ? _c : null });
-  }
-  return seats;
-}
 async function getRoomWithSeats(roomId) {
+  var _a, _b, _c, _d, _e;
   const cached = cacheGet(ROOM_CACHE_KEY(roomId));
   if (cached !== null && cached !== void 0) return cached;
-  await initDb();
-  const sessionRes = await sql`SELECT room_id, created_at, max_players, name, game_data FROM game_sessions WHERE room_id = ${roomId} LIMIT 1`;
-  if (!sessionRes.rows[0]) {
+  await ensureDb();
+  const joined = await sql`
+    SELECT
+      g.room_id, g.created_at, g.max_players, g.name, g.game_data,
+      s.seat_index, s.user_id, s.joined_at,
+      u.client_id AS u_client_id, u.openid AS u_openid, u.unionid AS u_unionid,
+      u.nickname AS u_nickname, u.avatar_url AS u_avatar_url, u.avatar_color AS u_avatar_color,
+      u.is_temporary AS u_is_temporary, u.is_vip AS u_is_vip, u.created_at AS u_created_at
+    FROM game_sessions g
+    LEFT JOIN session_players s ON s.room_id = g.room_id
+    LEFT JOIN users u ON u.id = s.user_id
+    WHERE g.room_id = ${roomId}
+    ORDER BY s.seat_index ASC NULLS LAST
+  `;
+  if (!joined.rows[0]) {
     cacheSet(ROOM_CACHE_KEY(roomId), null, 2e3);
     return null;
   }
-  const row = sessionRes.rows[0];
-  const gameData = typeof row.game_data === "string" ? JSON.parse(row.game_data) : row.game_data;
-  const seats = await getRoomSeats(roomId);
+  const head = joined.rows[0];
+  const gameData = typeof head.game_data === "string" ? JSON.parse(head.game_data) : head.game_data;
+  const max = head.max_players;
+  const seatMap = /* @__PURE__ */ new Map();
+  for (const r of joined.rows) {
+    if (r.seat_index === null || r.u_client_id === null) continue;
+    seatMap.set(r.seat_index, {
+      id: Number(r.user_id),
+      clientId: r.u_client_id,
+      openid: r.u_openid,
+      unionid: r.u_unionid,
+      nickname: (_a = r.u_nickname) != null ? _a : "",
+      avatarUrl: r.u_avatar_url,
+      avatarColor: r.u_avatar_color,
+      isTemporary: (_b = r.u_is_temporary) != null ? _b : true,
+      isVip: (_c = r.u_is_vip) != null ? _c : false,
+      createdAt: typeof r.u_created_at === "string" ? Number(r.u_created_at) : (_d = r.u_created_at) != null ? _d : 0
+    });
+  }
+  const seats = [];
+  for (let i = 0; i < max; i++) {
+    seats.push({ seatIndex: i, user: (_e = seatMap.get(i)) != null ? _e : null });
+  }
   const session = {
-    roomId: row.room_id,
-    createdAt: typeof row.created_at === "string" ? Number(row.created_at) : row.created_at,
-    maxPlayers: row.max_players,
-    name: row.name,
+    roomId: head.room_id,
+    createdAt: typeof head.created_at === "string" ? Number(head.created_at) : head.created_at,
+    maxPlayers: max,
+    name: head.name,
     gameData,
     seats
   };
@@ -279,7 +297,7 @@ async function getRoomWithSeats(roomId) {
   return session;
 }
 async function createRoomWithCreator(roomId, maxPlayers, creatorUserId, name) {
-  await initDb();
+  await ensureDb();
   const user = await getUserById(creatorUserId);
   if (!user) throw new Error("creator user \u4E0D\u5B58\u5728");
   const createdAt = Date.now();
@@ -301,7 +319,7 @@ async function createRoomWithCreator(roomId, maxPlayers, creatorUserId, name) {
 }
 async function seatPlayer(roomId, userId, seatIndex) {
   var _a;
-  await initDb();
+  await ensureDb();
   const sess = await sql`
     SELECT max_players FROM game_sessions WHERE room_id = ${roomId} LIMIT 1
   `;
@@ -355,7 +373,7 @@ async function leaveSeat(roomId, seatIndex) {
 }
 async function updateRoomGameData(roomId, gameData) {
   var _a, _b;
-  await initDb();
+  await ensureDb();
   const exists = await sql`SELECT 1 FROM game_sessions WHERE room_id = ${roomId} LIMIT 1`;
   if (!exists.rows[0]) {
     await sql`
@@ -408,7 +426,7 @@ async function listRooms(clientId) {
   const KEY = clientId ? `rooms:list:${clientId}` : "rooms:list:all";
   const cached = cacheGet(KEY);
   if (cached) return cached;
-  await initDb();
+  await ensureDb();
   let userId = null;
   if (clientId) {
     const u = await sql`SELECT id FROM users WHERE client_id = ${clientId} LIMIT 1`;

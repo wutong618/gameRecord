@@ -46,6 +46,7 @@ declare global {
   const deleteCookie: typeof import('../../node_modules/h3').deleteCookie
   const deleteRoom: typeof import('../../server/utils/room').deleteRoom
   const dynamicEventHandler: typeof import('../../node_modules/h3').dynamicEventHandler
+  const ensureDb: typeof import('../../server/utils/init-db').ensureDb
   const eventHandler: typeof import('../../node_modules/h3').eventHandler
   const fetchWithEvent: typeof import('../../node_modules/h3').fetchWithEvent
   const fromNodeMiddleware: typeof import('../../node_modules/h3').fromNodeMiddleware
@@ -81,7 +82,6 @@ declare global {
   const getValidatedRouterParams: typeof import('../../node_modules/h3').getValidatedRouterParams
   const handleCacheHeaders: typeof import('../../node_modules/h3').handleCacheHeaders
   const handleCors: typeof import('../../node_modules/h3').handleCors
-  const initDb: typeof import('../../server/utils/init-db').initDb
   const invalidateRoomCache: typeof import('../../server/utils/room').invalidateRoomCache
   const isCorsOriginAllowed: typeof import('../../node_modules/h3').isCorsOriginAllowed
   const isError: typeof import('../../node_modules/h3').isError
@@ -172,7 +172,7 @@ export { appendCorsHeaders, appendCorsPreflightHeaders, appendHeader, appendHead
 export { buildAssetsURL as __buildAssetsURL, publicAssetsURL as __publicAssetsURL } from '/Users/dukkha/gameRecord/node_modules/nuxt/dist/core/runtime/nitro/paths';
 export { defineAppConfig } from '/Users/dukkha/gameRecord/node_modules/nuxt/dist/core/runtime/nitro/config';
 export { cacheGet, cacheSet, cacheInvalidate, cacheInvalidateAll } from '/Users/dukkha/gameRecord/server/utils/cache';
-export { initDb } from '/Users/dukkha/gameRecord/server/utils/init-db';
+export { ensureDb } from '/Users/dukkha/gameRecord/server/utils/init-db';
 export { rowToUser } from '/Users/dukkha/gameRecord/server/utils/mappers';
 export { sql } from '/Users/dukkha/gameRecord/server/utils/postgres';
 export { invalidateRoomCache, getOrCreateTempUser, getUserById, updateUser, bindWechat, getRoomWithSeats, createRoomWithCreator, seatPlayer, leaveSeat, updateRoomGameData, deleteRoom, deleteAllRooms, listRooms } from '/Users/dukkha/gameRecord/server/utils/room';

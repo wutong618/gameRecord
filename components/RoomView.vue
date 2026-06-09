@@ -275,6 +275,7 @@
 </template>
 
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue'
 import { useRoom } from '~/composables/useRoom'
 import { useUser } from '~/composables/useUser'
 import { usePolling } from '~/composables/usePolling'
@@ -286,6 +287,17 @@ import {
   LoaderCircle, AlertCircle, RefreshCw, Target, MousePointerClick, Sparkles
 } from 'lucide-vue-next'
 import type { User } from '~/types'
+
+// v3.1 性能优化：5 个 modal 改为 defineAsyncComponent。
+// 原实现：所有 modal 通过 Nuxt 自动 import 静态导入，~88KB 的 vwcushCa.js chunk 包含全部 modal。
+// 现在：Vite 把每个 modal 拆成独立 chunk，仅在用户首次点开时才下载。
+// （ScoreInputModal/ProfileModal/RoundDetailModal/RoastModal 内部都引用了 browser-image-compression
+//   / @vercel/blob / Chart.js 等大件，单独分块后能省下首屏 30-50KB。）
+const ScoreInputModal = defineAsyncComponent(() => import('./ScoreInputModal.vue'))
+const ProfileModal = defineAsyncComponent(() => import('./ProfileModal.vue'))
+const RoundDetailModal = defineAsyncComponent(() => import('./RoundDetailModal.vue'))
+const RoastModal = defineAsyncComponent(() => import('./RoastModal.vue'))
+const ConfirmDialog = defineAsyncComponent(() => import('./ConfirmDialog.vue'))
 
 const props = defineProps<{ roomId: string }>()
 defineEmits<{ (e: 'leave'): void }>()

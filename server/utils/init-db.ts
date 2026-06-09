@@ -6,7 +6,22 @@ import { sql } from './postgres'
 //   session_players  —— 座位映射（哪个用户坐在哪个房间的哪个位置）
 //
 // v2.x 的 `players` 表（4 行固定玩家）已删除。旧 game_sessions 数据清空。
-export async function initDb(): Promise<void> {
+//
+// v3.1 性能优化：把 12 步 DDL 改为模块级单例。
+// 原实现每个 endpoint 调用都 `await initDb()`，走 @vercel/postgres HTTP 模式
+// = 12 次串行 HTTPS 往返。Vercel 函数 cold start 后 warm 状态下完全没必要重跑。
+// 现在只在模块第一次加载时跑一次，后续 endpoint 直接 await ensureDb() 复用。
+
+let dbReady: Promise<void> | null = null
+
+export function ensureDb(): Promise<void> {
+  if (!dbReady) {
+    dbReady = runDdl()
+  }
+  return dbReady
+}
+
+async function runDdl(): Promise<void> {
   // 先清掉 v2.x 的 players 表（幂等）
   await sql`DROP TABLE IF EXISTS players CASCADE`
 

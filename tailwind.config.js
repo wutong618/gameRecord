@@ -7,15 +7,42 @@ module.exports = {
     './plugins/**/*.{js,ts}',
     './app.vue'
   ],
+  // v3.1：关掉未使用的 corePlugins，能砍掉 entry.css 几十 KB
+  // 审计：项目里 0 处使用 container / placeholder 颜色 / accent-color / 滚动行为插件
+  corePlugins: {
+    container: false,
+    placeholderColor: false,
+    placeholderOpacity: false,
+    accentColor: false,
+    scrollPadding: false,
+    scrollMargin: false,
+    scrollSnapAlign: false,
+    scrollSnapStop: false,
+    scrollSnapType: false
+  },
+  // 自定义 class 防止被 purge 误删
+  safelist: [
+    'text-glow-green', 'text-glow-blue', 'text-glow-pink', 'text-glow-cyan',
+    'shadow-neon-green', 'shadow-neon-blue', 'shadow-neon-pink', 'shadow-neon-green-lg', 'shadow-neon-blue-lg', 'shadow-neon-pink-lg',
+    'border-glow-green', 'border-glow-blue', 'border-glow-pink',
+    'btn-cyber-primary', 'btn-cyber-ghost',
+    'glass-card', 'glass-card-elevated',
+    'text-gradient-cyber', 'scan-line-band', 'shimmer-bg',
+    'font-pingfang', 'font-heading', 'font-score', 'font-num', 'font-mono',
+    'animate-breathe', 'animate-shimmer', 'animate-glow-pulse',
+    'bg-cyber-bg', 'bg-cyber-surface', 'bg-cyber-elevated',
+    'ring-cyan', 'ring-pink', 'ring-green'
+  ],
   theme: {
     extend: {
       fontFamily: {
-        // UI 默认：Noto Sans SC（中文）→ Audiowide（无中文时兜底）
-        sans: ['Noto Sans SC', 'Audiowide', 'system-ui', 'sans-serif'],
-        // 主标题用：Audiowide（圆润复古电子 + 强烈游戏感）
-        display: ['Audiowide', 'Orbitron', 'Noto Sans SC', 'system-ui', 'sans-serif'],
-        // 副标题/按钮：Orbitron（赛博几何，有未来感）
-        heading: ['Orbitron', 'Audiowide', 'Noto Sans SC', 'sans-serif'],
+        // v3.1 字体瘦身：Audiowide / Bungee 已从 googleFonts 移除，stack 里也清掉
+        // UI 默认：Noto Sans SC（中文）→ 系统 sans
+        sans: ['Noto Sans SC', 'system-ui', 'sans-serif'],
+        // 主标题用：Orbitron（赛博几何，强烈游戏感）
+        display: ['Orbitron', 'Noto Sans SC', 'system-ui', 'sans-serif'],
+        // 副标题/按钮：Orbitron
+        heading: ['Orbitron', 'Noto Sans SC', 'sans-serif'],
         // 数字/分数：JetBrains Mono（等宽，不抖）+ Russo One（强调时力量感）
         mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
         // 力量感数字（用于 +5 / -3 大字号）

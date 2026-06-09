@@ -14,12 +14,23 @@
     </header>
 
     <main class="px-4 max-w-md mx-auto space-y-6">
-      <!-- 当前用户卡片（玻璃态 + 头像环） -->
-      <Transition name="slide-in-top">
+      <!-- 当前用户卡片（v3.1：先骨架占位，数据到达后无缝替换） -->
+      <div class="glass-card-elevated rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden min-h-[72px]">
+        <!-- 骨架：没拿到 user 时显示 -->
         <div
-          v-if="currentUser"
-          class="glass-card-elevated rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden"
+          v-if="!currentUser"
+          class="flex items-center gap-4 w-full"
+          aria-label="加载中"
         >
+          <div class="w-12 h-12 rounded-full shimmer-bg shrink-0" />
+          <div class="flex-1 space-y-2">
+            <div class="h-3 rounded shimmer-bg w-24" />
+            <div class="h-2 rounded shimmer-bg w-16" />
+          </div>
+        </div>
+
+        <!-- 真实卡片：currentUser 到达后淡入 -->
+        <template v-else>
           <!-- 背景光晕 -->
           <div
             class="absolute -right-10 -top-10 w-32 h-32 rounded-full pointer-events-none opacity-40"
@@ -52,8 +63,8 @@
               <span class="text-[10px] text-slate-500 font-mono">id #{{ currentUser.id }}</span>
             </div>
           </div>
-        </div>
-      </Transition>
+        </template>
+      </div>
 
       <!-- 房间名称 + 人数 + 创建 -->
       <div class="space-y-3">
@@ -220,9 +231,19 @@ const clearing = ref(false)
 const askClearAll = ref(false)
 const rooms = ref<RoomSummary[]>([])
 
-onMounted(async () => {
-  await initUser()
-  loadList()
+// v3.1 性能优化：并行而不是串行。
+// 原来：await initUser() (~1.5s 跨太平洋) → loadList() (再 ~1.5s) = 3s 串行
+// 现在：initUser 同步读 localStorage 立刻填 currentUser，watcher 触发 loadList；
+// 后台异步 ensureTempUser 完成时 currentUser 引用更新 + localStorage 持久化。
+// 首屏 HTML 渲染和骨架屏立即可见，历史房间与 user 卡片几乎同时就位。
+onMounted(() => {
+  initUser()  // 同步返回 cache user（null 时也立刻返回 null）
+  loadList()  // currentUser 可能还是 null（首次访问），但 listCache 5s 内命中 / 失败也无害
+})
+
+// 监听 currentUser 变化：user 异步 ensure 回来后再拉一次列表（clientId 可能换）
+watch(currentUser, (u) => {
+  if (u) loadList()
 })
 
 async function loadList() {

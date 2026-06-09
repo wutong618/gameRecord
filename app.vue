@@ -1,6 +1,7 @@
 <script setup lang="ts">
-// 全局 keep-alive：每 60s ping 一次 /api/health，避免 Vercel serverless 函数"冻"
-const { isActive: keepAliveActive, lastPingAt } = useKeepAlive(60_000)
+// 全局 keep-alive：每 5 分钟 ping 一次 /api/health，避免 Vercel serverless 函数"冻"
+// v3.1：从 60s 延长到 5min——见 useKeepAlive.ts 注释
+const { isActive: keepAliveActive, lastPingAt } = useKeepAlive(300_000)
 </script>
 
 <template>

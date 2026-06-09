@@ -1,5 +1,5 @@
 import { sql } from './postgres'
-import { initDb } from './init-db'
+import { ensureDb } from './init-db'
 import { cacheGet, cacheSet, cacheInvalidate } from './cache'
 import {
   randomNickname,
@@ -61,7 +61,7 @@ function rowToUser(r: UserRow): User {
 
 // 用 client_id 拿或创建临时用户
 export async function getOrCreateTempUser(clientId: string): Promise<User> {
-  await initDb()
+  await ensureDb()
   // 先查
   const found = await sql<UserRow>`SELECT * FROM users WHERE client_id = ${clientId} LIMIT 1`
   if (found.rows[0]) return rowToUser(found.rows[0])
@@ -168,29 +168,78 @@ async function getRoomSeats(roomId: string): Promise<Seat[]> {
 }
 
 // 取房间（含 seats + game_data），5s 缓存
+// v3.1 性能优化：合并 sessions + players + users 三表到一次 JOIN，
+// 避免原 getRoomSeats 重复查 max_players 浪费 RTT。
 export async function getRoomWithSeats(roomId: string): Promise<GameSession | null> {
   const cached = cacheGet<GameSession | null>(ROOM_CACHE_KEY(roomId))
   if (cached !== null && cached !== undefined) return cached
-  await initDb()
-  const sessionRes = await sql<{
+  await ensureDb()
+  // 单次 JOIN：sessions LEFT JOIN players LEFT JOIN users，按 seat_index 排序
+  const joined = await sql<{
     room_id: string
     created_at: string | number
     max_players: number
     name: string | null
     game_data: GameData | string
-  }>`SELECT room_id, created_at, max_players, name, game_data FROM game_sessions WHERE room_id = ${roomId} LIMIT 1`
-  if (!sessionRes.rows[0]) {
+    seat_index: number | null
+    user_id: string | number | null
+    joined_at: string | number | null
+    // user 字段（LEFT JOIN 可能为 null）
+    u_client_id: string | null
+    u_openid: string | null
+    u_unionid: string | null
+    u_nickname: string | null
+    u_avatar_url: string | null
+    u_avatar_color: string | null
+    u_is_temporary: boolean | null
+    u_is_vip: boolean | null
+    u_created_at: string | number | null
+  }>`
+    SELECT
+      g.room_id, g.created_at, g.max_players, g.name, g.game_data,
+      s.seat_index, s.user_id, s.joined_at,
+      u.client_id AS u_client_id, u.openid AS u_openid, u.unionid AS u_unionid,
+      u.nickname AS u_nickname, u.avatar_url AS u_avatar_url, u.avatar_color AS u_avatar_color,
+      u.is_temporary AS u_is_temporary, u.is_vip AS u_is_vip, u.created_at AS u_created_at
+    FROM game_sessions g
+    LEFT JOIN session_players s ON s.room_id = g.room_id
+    LEFT JOIN users u ON u.id = s.user_id
+    WHERE g.room_id = ${roomId}
+    ORDER BY s.seat_index ASC NULLS LAST
+  `
+  if (!joined.rows[0]) {
     cacheSet(ROOM_CACHE_KEY(roomId), null, 2000)
     return null
   }
-  const row = sessionRes.rows[0]
-  const gameData = typeof row.game_data === 'string' ? JSON.parse(row.game_data) : row.game_data
-  const seats = await getRoomSeats(roomId)
+  const head = joined.rows[0]
+  const gameData = typeof head.game_data === 'string' ? JSON.parse(head.game_data) : head.game_data
+  const max = head.max_players
+  // 用 Map 把 seat_index → User（seat_index 可能是 null，LEFT JOIN 一行表示无座）
+  const seatMap = new Map<number, User>()
+  for (const r of joined.rows) {
+    if (r.seat_index === null || r.u_client_id === null) continue
+    seatMap.set(r.seat_index, {
+      id: Number(r.user_id),
+      clientId: r.u_client_id,
+      openid: r.u_openid,
+      unionid: r.u_unionid,
+      nickname: r.u_nickname ?? '',
+      avatarUrl: r.u_avatar_url,
+      avatarColor: r.u_avatar_color,
+      isTemporary: r.u_is_temporary ?? true,
+      isVip: r.u_is_vip ?? false,
+      createdAt: typeof r.u_created_at === 'string' ? Number(r.u_created_at) : (r.u_created_at ?? 0)
+    })
+  }
+  const seats: Seat[] = []
+  for (let i = 0; i < max; i++) {
+    seats.push({ seatIndex: i, user: seatMap.get(i) ?? null })
+  }
   const session: GameSession = {
-    roomId: row.room_id,
-    createdAt: typeof row.created_at === 'string' ? Number(row.created_at) : row.created_at,
-    maxPlayers: row.max_players,
-    name: row.name,
+    roomId: head.room_id,
+    createdAt: typeof head.created_at === 'string' ? Number(head.created_at) : head.created_at,
+    maxPlayers: max,
+    name: head.name,
     gameData,
     seats
   }
@@ -205,7 +254,7 @@ export async function createRoomWithCreator(
   creatorUserId: number,
   name?: string | null
 ): Promise<GameSession> {
-  await initDb()
+  await ensureDb()
   // 先确保 user 存在
   const user = await getUserById(creatorUserId)
   if (!user) throw new Error('creator user 不存在')
@@ -236,7 +285,7 @@ export async function seatPlayer(
   userId: number,
   seatIndex?: number
 ): Promise<{ seat: Seat; session: GameSession; switched: boolean }> {
-  await initDb()
+  await ensureDb()
   // 先校验房间存在
   const sess = await sql<{ max_players: number }>`
     SELECT max_players FROM game_sessions WHERE room_id = ${roomId} LIMIT 1
@@ -303,7 +352,7 @@ export async function updateRoomGameData(
   roomId: string,
   gameData: GameData
 ): Promise<void> {
-  await initDb()
+  await ensureDb()
   const exists = await sql`SELECT 1 FROM game_sessions WHERE room_id = ${roomId} LIMIT 1`
   if (!exists.rows[0]) {
     // 隐式创建
@@ -374,7 +423,7 @@ export async function listRooms(clientId?: string): Promise<RoomSummary[]> {
   const KEY = clientId ? `rooms:list:${clientId}` : 'rooms:list:all'
   const cached = cacheGet<RoomSummary[]>(KEY)
   if (cached) return cached
-  await initDb()
+  await ensureDb()
 
   // 解析 userId（如果给了 clientId）
   let userId: number | null = null
