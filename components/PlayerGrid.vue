@@ -9,6 +9,8 @@
       :user="seat.user"
       :is-self="isSelfSeat(seat.seatIndex)"
       :score="totalScores[seat.seatIndex] ?? 0"
+      :total-scores="totalScores"
+      :seat-index="seat.seatIndex"
       :uploading="false"
       size="md"
       @click="onSeatClick(seat.seatIndex, seat.user)"
