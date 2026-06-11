@@ -72,7 +72,11 @@
           :style="particleStyle(p)"
         />
 
-        <!-- 脉冲光晕环（从头像边缘向外扩散 2 次，错开 0.9s） -->
+        <!--
+          脉冲光晕环：v6.0.1 修成 64×64 固定正方形 + border-radius: 50%
+          原来 width/height: 100% 跟随 stage 矩形（90×80）→ 9999px 把它变成胶囊形。
+          现在用 absolute 居中 + 50% 半径，确保是真圆。
+        -->
         <span
           v-for="r in [0, 1]"
           :key="`halo-${r}`"
@@ -185,15 +189,16 @@ const avatarStyle = computed(() => {
   }
 })
 
-// v3.1.1 第一名粒子定义（6 个，错开 delay / duration / 水平漂移 dx）
-// x 是粒子起始的水平位置（% of stage 宽度），dx 是上升过程中的水平漂移
+// v6.0.1 第一名粒子定义（6 个，错开 delay / duration / 水平漂移 dx）
+// 粒子尺寸上调到 5-6px（旧版 3-4px 在移动 webview 太小，box-shadow
+// 反而盖过粒子主体导致视觉像方块）。
 const FIRST_PARTICLES = [
-  { id: 0, x: 25, dx: -8,  size: 4, dur: 2.0, dly: 0.0 },
-  { id: 1, x: 45, dx:  4,  size: 3, dur: 2.4, dly: 0.5 },
-  { id: 2, x: 65, dx: -3,  size: 4, dur: 1.8, dly: 1.0 },
-  { id: 3, x: 35, dx: 10,  size: 3, dur: 2.2, dly: 0.3 },
-  { id: 4, x: 75, dx: -10, size: 4, dur: 1.9, dly: 1.4 },
-  { id: 5, x: 55, dx:  2,  size: 3, dur: 2.3, dly: 0.8 }
+  { id: 0, x: 25, dx: -8,  size: 5, dur: 2.0, dly: 0.0 },
+  { id: 1, x: 45, dx:  4,  size: 6, dur: 2.4, dly: 0.5 },
+  { id: 2, x: 65, dx: -3,  size: 5, dur: 1.8, dly: 1.0 },
+  { id: 3, x: 35, dx: 10,  size: 6, dur: 2.2, dly: 0.3 },
+  { id: 4, x: 75, dx: -10, size: 5, dur: 1.9, dly: 1.4 },
+  { id: 5, x: 55, dx:  2,  size: 6, dur: 2.3, dly: 0.8 }
 ] as const
 
 // 把每个粒子的运行时样式包成对象返回（含 left、--dx、--dur、--d、自定义 size）
@@ -215,24 +220,25 @@ function handleClick() {
 
 <style scoped>
 /*
- * v3.1.1 第一名粒子 + 光晕动画
- * - first-particle: 从 stage 底部 15% 位置上升，translate + scale + opacity 同步
- * - first-halo: 头像边缘环脉冲外扩 2 次
+ * v6.0.1 第一名粒子 + 光晕动画
+ * - first-particle: 从 stage 底部 8% 位置上升，translate + scale + opacity 同步
+ *   改成 5-6px 圆点 + 单色 box-shadow（去掉 color-mix，老 iOS webview 兼容）
+ * - first-halo: 64×64 正方形 + 50% 圆角 → 永远是真圆，不再因 stage 比例变椭圆
  * - 都用 will-change 提示 GPU 合成，transform/opacity 走合成层
  */
 
 .first-particle {
   position: absolute;
-  bottom: 15%;
-  border-radius: 9999px;
+  bottom: 8%;
+  border-radius: 50%;
   background: var(--c, #00ffff);
+  /* 单色双层 glow：4px 内核 + 12px 外晕，移动 webview 兼容性最好 */
   box-shadow:
     0 0 4px var(--c, #00ffff),
-    0 0 10px var(--c, #00ffff),
-    0 0 18px color-mix(in srgb, var(--c, #00ffff) 50%, transparent);
+    0 0 12px var(--c, #00ffff);
   opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, 0) scale(0.3);
+  transform: translate(-50%, 0) scale(0.4);
   animation: first-rise var(--dur, 2s) ease-out infinite;
   animation-delay: var(--d, 0s);
   will-change: transform, opacity;
@@ -240,29 +246,32 @@ function handleClick() {
 
 @keyframes first-rise {
   0% {
-    transform: translate(-50%, 0) scale(0.3);
+    transform: translate(-50%, 0) scale(0.4);
     opacity: 0;
   }
   15% {
     opacity: 1;
   }
   70% {
-    opacity: 0.7;
+    opacity: 0.75;
   }
   100% {
     /* 上升 55px 同时水平漂移 dx；用 calc 把 -50% 居中补偿和 dx 漂移合并 */
-    transform: translate(calc(-50% + var(--dx, 0px)), -55px) scale(1.3);
+    transform: translate(calc(-50% + var(--dx, 0px)), -55px) scale(1.2);
     opacity: 0;
   }
 }
 
 .first-halo {
   position: absolute;
-  inset: 0;
-  margin: auto;
-  width: 100%;
-  height: 100%;
-  border-radius: 9999px;
+  /* v6.0.1 改成固定 64×64 正方形 + 50% 圆角，永远是真圆。
+     居中用 top/left 50% + translate(-50%, -50%)，与头像 64×64 同心。 */
+  width: 64px;
+  height: 64px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  border-radius: 50%;
   border: 1.5px solid var(--c, #00ffff);
   box-shadow: 0 0 8px var(--c, #00ffff);
   opacity: 0;
@@ -273,11 +282,11 @@ function handleClick() {
 
 @keyframes first-halo-pulse {
   0% {
-    transform: scale(0.95);
-    opacity: 0.75;
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0.8;
   }
   100% {
-    transform: scale(1.4);
+    transform: translate(-50%, -50%) scale(1.4);
     opacity: 0;
   }
 }

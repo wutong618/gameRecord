@@ -70,7 +70,18 @@
       <div class="space-y-3">
         <div class="glass-card rounded-2xl p-4 space-y-4">
           <div>
-            <label class="font-heading text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-1.5 block">房间名称</label>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="font-heading text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold block">房间名称</label>
+              <button
+                type="button"
+                class="text-[10px] font-bold text-slate-500 hover:text-neon-blue flex items-center gap-1 active:scale-95 transition-transform"
+                @click="randomRoomName"
+                title="随机一个"
+              >
+                <Shuffle class="w-3 h-3" :stroke-width="2.5" />
+                随机
+              </button>
+            </div>
             <input
               v-model="roomName"
               type="text"
@@ -78,6 +89,19 @@
               placeholder="给房间起个名字（可选）"
               class="font-heading w-full bg-slate-900/60 text-white text-center text-sm py-2.5 rounded-xl border border-slate-700/60 focus:border-neon-blue/60 focus:ring-2 focus:ring-neon-blue/20 outline-none transition-all duration-200 placeholder:text-slate-600"
             />
+            <!-- v6.0 幽默房间名 chip 行：点一下填充，懒得打字就抽 -->
+            <div class="-mx-1 mt-2.5 flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+              <button
+                v-for="name in FUNNY_ROOM_NAMES"
+                :key="name"
+                type="button"
+                class="shrink-0 px-2.5 py-1 rounded-full text-[11px] font-bold border border-slate-700/60 text-slate-400 hover:border-neon-blue/50 hover:text-neon-blue hover:bg-neon-blue/5 active:scale-95 transition-all whitespace-nowrap"
+                :class="roomName === name ? 'border-neon-blue/70 text-neon-blue bg-neon-blue/10' : ''"
+                @click="pickRoomName(name)"
+              >
+                {{ name }}
+              </button>
+            </div>
           </div>
           <div>
             <label class="font-heading text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-2 block">玩家人数</label>
@@ -215,7 +239,7 @@ import { listRooms as fetchRooms, deleteAllRooms, type RoomSummary } from '~/com
 import { useUser } from '~/composables/useUser'
 import { useAnalytics } from '~/composables/useAnalytics'
 import { PLAYER_COLORS } from '~/types'
-import { Trophy, LogIn, History, RefreshCw, Inbox, Link2, Trash2 } from 'lucide-vue-next'
+import { Trophy, LogIn, History, RefreshCw, Inbox, Link2, Trash2, Shuffle } from 'lucide-vue-next'
 
 const emit = defineEmits<{
   (e: 'enter', roomId: string): void
@@ -223,6 +247,25 @@ const emit = defineEmits<{
 
 const { currentUser, init: initUser } = useUser()
 const analytics = useAnalytics()
+
+// v6.0 默认幽默房间名库：覆盖"对抗 / 嘲讽 / 自嘲 / 玩梗"四类情绪
+// 不直接用 emoji prefix 是因为不想抢"游戏记分器"主标题的视觉焦点
+const FUNNY_ROOM_NAMES = [
+  '群魔乱舞局', '菜鸡互啄大会', '巅峰对决', '翻盘选手集合',
+  '谁是卧底', '智商检测站', '大佬求带', '欢乐送分局',
+  '赌神争霸', '零和博弈', '人菜瘾大', '请文明竞技',
+  '友谊的小船', '爸爸们打架', '妈妈叫我回家', '输了请奶茶',
+  '一局定乾坤', '周末不睡觉', '加班后遗症', '摸鱼专属'
+] as const
+
+function pickRoomName(name: string) {
+  roomName.value = name
+}
+function randomRoomName() {
+  // 排除当前已选项，避免点了等于没点
+  const pool = FUNNY_ROOM_NAMES.filter((n) => n !== roomName.value)
+  roomName.value = pool[Math.floor(Math.random() * pool.length)]
+}
 
 const inputRoom = ref('')
 const roomName = ref('')

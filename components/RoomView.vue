@@ -1,5 +1,10 @@
 <template>
-  <div class="min-h-screen pb-28 safe-area-bottom">
+  <!--
+    v6.0.1 底部留白：pb-40 (160px) + safe-area-bottom
+    足够让最后一条历史记录完全露在 "记录下一轮" 浮动按钮上方。
+    之前 pb-28 (112px) 在 iPhone 14+ 大安全区 + 大按钮下会被遮。
+  -->
+  <div class="min-h-screen pb-40 safe-area-bottom">
     <!-- 顶部 -->
     <header
       v-if="currentSession"
@@ -184,8 +189,8 @@
       </div>
     </div>
 
-    <!-- 底部按钮 -->
-    <div v-if="currentSession && isCurrentUserSeated" class="fixed bottom-6 left-4 right-4 z-30 safe-area-bottom">
+    <!-- 底部按钮：bottom-8 (32px) 给按钮更多呼吸间距 -->
+    <div v-if="currentSession && isCurrentUserSeated" class="fixed bottom-8 left-4 right-4 z-30 safe-area-bottom">
       <button
         class="btn-cyber-primary w-full py-5 rounded-2xl text-xl flex items-center justify-center gap-2.5 relative overflow-hidden"
         :disabled="isSaving"
