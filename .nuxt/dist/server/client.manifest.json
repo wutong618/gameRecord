@@ -3,81 +3,84 @@
     "resourceType": "style",
     "prefetch": true,
     "preload": true,
-    "file": "index.DSqmyoXb.css",
+    "file": "index.Dn3WThqu.css",
     "src": "_!~{002}~.js"
   },
-  "_CPLOXOX_.js": {
+  "_CfJKbin_.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CPLOXOX_.js",
-    "name": "x",
+    "file": "CfJKbin_.js",
+    "name": "vue.-sixQ7xP",
     "imports": [
-      "_o7BOEoie.js"
+      "node_modules/nuxt/dist/app/entry.js"
     ]
   },
-  "_DlAUqK2U.js": {
+  "_bqIpbXP5.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "DlAUqK2U.js",
-    "name": "_plugin-vue_export-helper"
-  },
-  "_o7BOEoie.js": {
-    "resourceType": "script",
-    "module": true,
-    "prefetch": true,
-    "preload": true,
-    "file": "o7BOEoie.js",
+    "file": "bqIpbXP5.js",
     "name": "index",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_DlAUqK2U.js",
       "node_modules/@vercel/analytics/dist/index.mjs"
     ],
     "dynamicImports": [
       "components/ScoreInputModal.vue",
       "components/ProfileModal.vue",
       "components/RoundDetailModal.vue",
-      "components/RoastModal.vue"
+      "components/RoastModal.vue",
+      "components/ConfirmDialog.vue",
+      "components/ProfileModal.vue"
     ],
     "css": [
-      "index.DSqmyoXb.css"
+      "index.Dn3WThqu.css"
     ]
   },
-  "index.DSqmyoXb.css": {
-    "file": "index.DSqmyoXb.css",
+  "index.Dn3WThqu.css": {
+    "file": "index.Dn3WThqu.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
   },
-  "_wKq0OeHQ.js": {
+  "components/ConfirmDialog.vue": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "wKq0OeHQ.js",
-    "name": "vue.-sixQ7xP",
+    "file": "AqkajNfc.js",
+    "name": "ConfirmDialog",
+    "src": "components/ConfirmDialog.vue",
+    "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
+    ],
+    "css": [
+      "ConfirmDialog.BYfU5faS.css"
     ]
+  },
+  "ConfirmDialog.BYfU5faS.css": {
+    "file": "ConfirmDialog.BYfU5faS.css",
+    "resourceType": "style",
+    "prefetch": true,
+    "preload": true
   },
   "components/ProfileModal.vue": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CIASJ5Tj.js",
+    "file": "BrsuWWPl.js",
     "name": "ProfileModal",
     "src": "components/ProfileModal.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_o7BOEoie.js",
-      "_DlAUqK2U.js",
+      "_bqIpbXP5.js",
       "node_modules/@vercel/analytics/dist/index.mjs"
     ],
     "dynamicImports": [
@@ -99,15 +102,13 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "BpjbQdRI.js",
+    "file": "DvHUWYY7.js",
     "name": "RoastModal",
     "src": "components/RoastModal.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_o7BOEoie.js",
-      "_CPLOXOX_.js",
-      "_DlAUqK2U.js",
+      "_bqIpbXP5.js",
       "node_modules/@vercel/analytics/dist/index.mjs"
     ],
     "css": [
@@ -125,15 +126,13 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "KGBk3kuf.js",
+    "file": "DriGRoh7.js",
     "name": "RoundDetailModal",
     "src": "components/RoundDetailModal.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_o7BOEoie.js",
-      "_CPLOXOX_.js",
-      "_DlAUqK2U.js",
+      "_bqIpbXP5.js",
       "node_modules/@vercel/analytics/dist/index.mjs"
     ],
     "css": [
@@ -151,14 +150,13 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "Dxb95CxE.js",
+    "file": "ByGPKsSQ.js",
     "name": "ScoreInputModal",
     "src": "components/ScoreInputModal.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_o7BOEoie.js",
-      "_DlAUqK2U.js",
+      "_bqIpbXP5.js",
       "node_modules/@vercel/analytics/dist/index.mjs"
     ],
     "css": [
@@ -356,14 +354,13 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "DASfL17o.js",
+    "file": "C67NfLkj.js",
     "name": "error-404",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_wKq0OeHQ.js",
-      "_DlAUqK2U.js"
+      "_CfJKbin_.js"
     ],
     "css": [
       "error-404.Dgo7RJym.css"
@@ -380,13 +377,12 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CTx8tHVe.js",
+    "file": "CtnLyUzL.js",
     "name": "error-500",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_wKq0OeHQ.js",
-      "_DlAUqK2U.js",
+      "_CfJKbin_.js",
       "node_modules/nuxt/dist/app/entry.js"
     ],
     "css": [
@@ -444,19 +440,19 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "wmX4H4qZ.js",
+    "file": "C1u-HlLF.js",
     "name": "entry",
     "src": "node_modules/nuxt/dist/app/entry.js",
     "isEntry": true,
     "dynamicImports": [
-      "_o7BOEoie.js",
+      "_bqIpbXP5.js",
       "node_modules/@vercel/analytics/dist/index.mjs",
       "node_modules/@vercel/speed-insights/dist/index.mjs",
       "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue",
       "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue"
     ],
     "css": [
-      "entry.oQX4B5Zy.css"
+      "entry.cMcevjsV.css"
     ],
     "assets": [
       "JetBrains_Mono-normal-400-cyrillic.Buze_B52.woff2",
@@ -475,8 +471,8 @@
       "Russo_One-normal-400-latin.BfOuQF9V.woff2"
     ]
   },
-  "entry.oQX4B5Zy.css": {
-    "file": "entry.oQX4B5Zy.css",
+  "entry.cMcevjsV.css": {
+    "file": "entry.cMcevjsV.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true

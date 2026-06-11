@@ -26,8 +26,14 @@ export function useRoom() {
   }
 
   // 创建房间
-  const createRoom = async (maxPlayers: number, creatorClientId: string) => {
-    const session = await db.createRoomApi(maxPlayers, creatorClientId)
+  // v6.0.1 bugfix：原签名只接 2 个参数，第三个 name 在 HomeView 已经传过来却被丢弃
+  // 导致 RoomView 拿到的 currentSession.name 永远是 null，标题回落到"未命名房间"
+  const createRoom = async (
+    maxPlayers: number,
+    creatorClientId: string,
+    name?: string
+  ) => {
+    const session = await db.createRoomApi(maxPlayers, creatorClientId, name)
     currentSession.value = session
     return session
   }

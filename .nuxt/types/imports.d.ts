@@ -154,6 +154,7 @@ declare global {
   const useServerSeoMeta: typeof import('../../node_modules/@unhead/vue')['useServerSeoMeta']
   const useSlots: typeof import('../../node_modules/vue')['useSlots']
   const useState: typeof import('../../node_modules/nuxt/dist/app/composables/state')['useState']
+  const useToast: typeof import('../../composables/useToast')['useToast']
   const useTransitionState: typeof import('../../node_modules/vue')['useTransitionState']
   const useTypewriter: typeof import('../../composables/useTypewriter')['useTypewriter']
   const useUser: typeof import('../../composables/useUser')['useUser']
@@ -185,6 +186,9 @@ declare global {
   // @ts-ignore
   export type { RoastScenario, RoastJudgeInput } from '../../composables/useRoast'
   import('../../composables/useRoast')
+  // @ts-ignore
+  export type { ToastVariant, ToastItem } from '../../composables/useToast'
+  import('../../composables/useToast')
 }
 // for vue template auto import
 import { UnwrapRef } from 'vue'
@@ -343,6 +347,7 @@ declare module 'vue' {
     readonly useServerSeoMeta: UnwrapRef<typeof import('../../node_modules/@unhead/vue')['useServerSeoMeta']>
     readonly useSlots: UnwrapRef<typeof import('../../node_modules/vue')['useSlots']>
     readonly useState: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/state')['useState']>
+    readonly useToast: UnwrapRef<typeof import('../../composables/useToast')['useToast']>
     readonly useTransitionState: UnwrapRef<typeof import('../../node_modules/vue')['useTransitionState']>
     readonly useTypewriter: UnwrapRef<typeof import('../../composables/useTypewriter')['useTypewriter']>
     readonly useUser: UnwrapRef<typeof import('../../composables/useUser')['useUser']>

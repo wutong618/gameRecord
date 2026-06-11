@@ -34,6 +34,7 @@ export { usePolling } from '../composables/usePolling';
 export { ROASTS, triggerRoast, triggerRoomCreated, triggerPlayerJoined, dismissRoast, judgeAndTriggerRoast, useRoast, RoastScenario, RoastJudgeInput } from '../composables/useRoast';
 export { useRoom } from '../composables/useRoom';
 export { useScoreScale, computeScoreScale } from '../composables/useScoreScale';
+export { useToast, ToastVariant, ToastItem } from '../composables/useToast';
 export { useTypewriter } from '../composables/useTypewriter';
 export { useUser } from '../composables/useUser';
 export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composables';

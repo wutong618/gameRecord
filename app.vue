@@ -32,6 +32,9 @@ const { isActive: keepAliveActive, lastPingAt } = useKeepAlive(300_000)
     />
 
     <NuxtPage />
+
+    <!-- v6.0.3 全局 Toast 容器（Teleport 到 body，z-100 不被任何页面挡） -->
+    <ToastContainer />
   </div>
 </template>
 

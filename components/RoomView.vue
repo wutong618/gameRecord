@@ -1,10 +1,10 @@
 <template>
   <!--
-    v6.0.1 底部留白：pb-40 (160px) + safe-area-bottom
-    足够让最后一条历史记录完全露在 "记录下一轮" 浮动按钮上方。
-    之前 pb-28 (112px) 在 iPhone 14+ 大安全区 + 大按钮下会被遮。
+    v6.0.4 底部留白：pb-44 (176px) + safe-area-bottom
+    配合 fixed bottom 浮动按钮 (~96px 高度含 safe-area)，滚到最底时
+    最后一条历史记录 r1 仍能完整露在按钮上方 ~30px。
   -->
-  <div class="min-h-screen pb-40 safe-area-bottom">
+  <div class="min-h-screen pb-44 safe-area-bottom">
     <!-- 顶部 -->
     <header
       v-if="currentSession"
@@ -121,36 +121,46 @@
         <span class="text-slate-600 tracking-normal font-num">({{ currentSession.gameData.rounds.length }})</span>
       </h2>
 
-      <TransitionGroup
-        v-if="reversedRounds.length > 0"
-        name="round-list"
-        tag="div"
-        class="space-y-2"
-      >
-        <div
-          v-for="round in reversedRounds"
-          :key="round.roundNumber"
-          :class="[
-            'rounded-xl',
-            lastInsertedRound === round.roundNumber ? 'animate-flash-green' : ''
-          ]"
+      <!--
+        v6.0.3 "记录新一轮"按钮改为 inline 位置：
+        - 0 轮：作为空状态的主 CTA
+        - 1+ 轮：放在历史记录 r1（最新一条）的下方
+        不再用 fixed bottom 浮动 → 不再遮挡任何历史记录
+
+        v6.0.4 退回 fixed bottom：用户希望按钮常驻底部 viewport 不需滚动，
+        靠 pb-44 的页面 bottom padding 让 r1 滚到最底时仍能露在按钮上方。
+      -->
+      <template v-if="reversedRounds.length > 0">
+        <TransitionGroup
+          name="round-list"
+          tag="div"
+          class="space-y-2"
         >
-          <RoundListItem
-            :round="round"
-            :players="seatedPlayers"
-            @edit="openEditModal"
-            @delete="confirmDeleteRound"
-            @detail="openDetail"
-          />
-        </div>
-      </TransitionGroup>
+          <div
+            v-for="round in reversedRounds"
+            :key="round.roundNumber"
+            :class="[
+              'rounded-xl',
+              lastInsertedRound === round.roundNumber ? 'animate-flash-green' : ''
+            ]"
+          >
+            <RoundListItem
+              :round="round"
+              :players="seatedPlayers"
+              @edit="openEditModal"
+              @delete="confirmDeleteRound"
+              @detail="openDetail"
+            />
+          </div>
+        </TransitionGroup>
+      </template>
 
       <div v-else class="glass-card rounded-2xl p-10 text-center">
         <div class="w-14 h-14 rounded-2xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-center mx-auto mb-3">
           <Inbox class="w-7 h-7 text-slate-600" :stroke-width="1.5" />
         </div>
         <p class="text-slate-500 text-sm">还没有记录</p>
-        <p class="text-slate-600 text-xs mt-1">点击下方按钮开始记录</p>
+        <p class="text-slate-600 text-xs mt-1">坐满后点击下方按钮开始记录</p>
       </div>
     </div>
 
@@ -189,10 +199,18 @@
       </div>
     </div>
 
-    <!-- 底部按钮：bottom-8 (32px) 给按钮更多呼吸间距 -->
-    <div v-if="currentSession && isCurrentUserSeated" class="fixed bottom-8 left-4 right-4 z-30 safe-area-bottom">
+    <!--
+      v6.0.4 恢复 fixed 底部按钮（常驻 viewport 底部，永远无需滚动可见）
+      配合容器 pb-44：滚到最底时 r1 仍能露在按钮上方。
+      - bottom-6 (24px) + safe-area-bottom 让按钮不卡 iPhone home indicator
+      - 只在 isCurrentUserSeated 时显示（没坐下的用户看不到）
+    -->
+    <div
+      v-if="currentSession && isCurrentUserSeated"
+      class="fixed bottom-6 left-4 right-4 z-30 safe-area-bottom"
+    >
       <button
-        class="btn-cyber-primary w-full py-5 rounded-2xl text-xl flex items-center justify-center gap-2.5 relative overflow-hidden"
+        class="btn-cyber-primary w-full py-4 rounded-2xl text-lg flex items-center justify-center gap-2.5 relative overflow-hidden border-glow-green"
         :disabled="isSaving"
         @click="openAddModal"
       >
@@ -202,7 +220,7 @@
         </span>
         <span v-else class="flex items-center gap-2">
           <Target class="w-5 h-5" :stroke-width="2.5" />
-          记录新一轮
+          {{ reversedRounds.length === 0 ? '记录第一轮' : '记录新一轮' }}
         </span>
       </button>
     </div>
